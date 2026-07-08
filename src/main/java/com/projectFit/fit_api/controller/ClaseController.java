@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,8 +54,8 @@ public class ClaseController {
     //GET CLASES DISPONIBLES PARA RESERVAR SEGUN EL PLAN DEL SOCIO
     @GetMapping("/disponibles")
     public ResponseEntity<List<ClaseResponseDTO>> obtenerClasesDisponiblesParaSocio(
-            @RequestHeader ("X-Auth0-Id") String auth0Id){
-        return ResponseEntity.ok(claseService.obtenerClasesDisponiblesParaSocio(auth0Id));
+            @AuthenticationPrincipal Jwt jwt){
+        return ResponseEntity.ok(claseService.obtenerClasesDisponiblesParaSocio(jwt.getSubject()));
 
     }
 }

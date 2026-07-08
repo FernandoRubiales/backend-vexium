@@ -1,12 +1,18 @@
 server:
   port: 8080
   servlet:
-    context-path: /kore
+    context-path: /Vexium
 
 spring:
   application:
-    name: fit-api
-  
+    name: vexium-api
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-v0gmsrszibirwhyd.us.auth0.com/
+          jwk-set-uri: https://dev-v0gmsrszibirwhyd.us.auth0.com/.well-known/jwks.json
 
   datasource:
     url: jdbc:postgresql://localhost:5432/fit_db
@@ -39,4 +45,4 @@ app:
     dias-aviso-primero: 7
     dias-aviso-segundo: 1
   auth0:
-    audience: https://fit-api.com
+    audience: https://vexium-api.com

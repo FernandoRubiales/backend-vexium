@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +24,9 @@ public class SocioPlanController {
     @PostMapping
     public ResponseEntity<SocioPlanResponseDTO> elegirPlan(
             @Valid @RequestBody SocioPlanRequestDTO socioPlanRequestDTO,
-            @RequestHeader("X-Auth0-Id") String auth0Id) {
+            @AuthenticationPrincipal Jwt jwt) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(socioPlanService.elegirPlan(socioPlanRequestDTO, auth0Id));
+                .body(socioPlanService.elegirPlan(socioPlanRequestDTO, jwt.getSubject()));
     }
 
     //CUANDO SE ACEPTE EL PAGO, SE ACTIVA EL PLAN DEL SOCIO
@@ -36,8 +38,9 @@ public class SocioPlanController {
 
     //GET DE LOS PLANES ACTIVOS DEL SOCIO
     @GetMapping("/activos")
-    public ResponseEntity<List<SocioPlanResponseDTO>> obtenerPlanesActivos( @RequestHeader("X-Auth0-Id") String auth0Id){
-        return ResponseEntity.ok(socioPlanService.obtenerPlanesActivos(auth0Id));
+    public ResponseEntity<List<SocioPlanResponseDTO>> obtenerPlanesActivos(
+            @AuthenticationPrincipal Jwt jwt){
+        return ResponseEntity.ok(socioPlanService.obtenerPlanesActivos(jwt.getSubject()));
     }
 
     //GET DE PLANES PENDIENTES DEL SOCIO POR DNI

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,8 +59,8 @@ public class SocioController {
     //GENERAR IMAGEN QR
     @GetMapping("/qr")
     public ResponseEntity<byte[]> obtenerQr(
-            @RequestHeader("X-Auth0-Id") String auth0Id) throws Exception {
-        byte[] qrImage = socioService.generarImagenQr(auth0Id);
+            @AuthenticationPrincipal Jwt jwt) throws Exception {
+        byte[] qrImage = socioService.generarImagenQr(jwt.getSubject());
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(qrImage);
