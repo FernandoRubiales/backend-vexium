@@ -36,4 +36,5 @@ public class Reserva {
     @JoinColumn(name = "socio_plan_id")
     private SocioPlan socioPlan;
 
+
 }

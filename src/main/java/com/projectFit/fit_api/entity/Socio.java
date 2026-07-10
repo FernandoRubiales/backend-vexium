@@ -54,10 +54,11 @@ public class Socio {
     @Column(nullable = false)
     private LocalDate fechaNacimiento;
 
-    @Column(nullable = false)
-    private String rol;
-
     //RELACIONES
     @OneToMany(mappedBy = "socio", fetch = FetchType.LAZY)
     private List<SocioPlan> socioPlan;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
 }

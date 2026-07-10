@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -39,16 +40,15 @@ public class SocioController {
         Socio socio = socioService.obtenerOCrearSocio(jwt);
         return ResponseEntity.ok(socioMapper.toResponse(socio));
     }
-
-    // Solo admin puede cambiar roles
-    @PatchMapping("/{id}/rol")
+    //Solo admin puede cambiar roles
+    @PatchMapping("/{id}/cambiar-rol")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> cambiarRol(
             @PathVariable Long id,
-            @RequestParam String rol,
-            @AuthenticationPrincipal Jwt jwt) {
-        authUtils.verificarAdmin(jwt);
-        socioService.cambiarRol(id, rol);
+            @RequestParam String rol) {
+        socioService.cambiarRol(id, nuevoRol);
         return ResponseEntity.noContent().build();
+
     }
 
     //UPDATE SOCIO
