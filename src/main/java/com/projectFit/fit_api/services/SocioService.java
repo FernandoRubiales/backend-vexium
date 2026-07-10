@@ -13,6 +13,7 @@ import com.projectFit.fit_api.mappers.SocioMapper;
 import com.projectFit.fit_api.repository.SocioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +29,7 @@ public class SocioService {
     private final SocioRepository socioRepository;
     private final SocioMapper socioMapper;
 
-    //CREATE SOCIO
+    //CREATE SOCIO desde panel
     public SocioResponseDTO crearSocio(SocioRequestDTO socioRequestDTO){
         if (socioRepository.existsByDni(socioRequestDTO.getDni())) {
             throw new BusinessException("Ya existe un socio con ese DNI");
@@ -41,6 +42,39 @@ public class SocioService {
         socio.setQrCode(UUID.randomUUID().toString());
         Socio socioGuardado = socioRepository.save(socio);
         return socioMapper.toResponse(socioGuardado);
+    }
+
+    //CREATE O GET SOCIO - LOG IN
+    public Socio obtenerOCrearSocio(Jwt jwt) {
+        String auth0Id = jwt.getSubject();
+        String email = jwt.getClaimAsString("email");
+        String nombre = jwt.getClaimAsString("given_name");
+        String apellido = jwt.getClaimAsString("family_name");
+
+        return socioRepository.findByAuth0Id(auth0Id)
+                .orElseGet(() -> {
+                    Socio nuevo = new Socio();
+                    nuevo.setAuth0Id(auth0Id);
+                    nuevo.setEmail(email);
+                    nuevo.setNombre(nombre != null ? nombre : email);
+                    nuevo.setApellido(apellido != null ? apellido : "");
+                    nuevo.setQrCode(UUID.randomUUID().toString());
+                    nuevo.setRol("SOCIO");
+                    return socioRepository.save(nuevo);
+                });
+    }
+    //CHANGE ROL
+    public void cambiarRol(Long socioId, String nuevoRol) {
+        if (!nuevoRol.equals("ADMIN") &&
+                !nuevoRol.equals("RECEPCIONISTA") &&
+                !nuevoRol.equals("SOCIO")) {
+            throw new BusinessException("Rol inválido");
+        }
+        Socio socio = socioRepository.findById(socioId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Socio no encontrado"));
+        socio.setRol(nuevoRol);
+        socioRepository.save(socio);
     }
 
     //UPDATE SOCIO

@@ -12,6 +12,7 @@ public interface SocioMapper {
     //SocioRequestDTO a Entidad Socio
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "qrCode", ignore = true)
+    @Mapping(target = "rol", ignore = true)
     @Mapping(target = "socioPlan", ignore = true)
     Socio toEntity(SocioRequestDTO socioRequestDTO);
 

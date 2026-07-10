@@ -2,6 +2,8 @@ package com.projectFit.fit_api.controller;
 
 import com.projectFit.fit_api.dto.SocioRequestDTO;
 import com.projectFit.fit_api.dto.SocioResponseDTO;
+import com.projectFit.fit_api.entity.Socio;
+import com.projectFit.fit_api.mappers.SocioMapper;
 import com.projectFit.fit_api.services.SocioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 public class SocioController {
 
     private final SocioService socioService;
+    private final SocioMapper socioMapper;
 
     //CREATE SOCIO
     @PostMapping
@@ -27,6 +30,25 @@ public class SocioController {
         SocioResponseDTO socioResponse = socioService.crearSocio(socioRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(socioResponse);
 
+    }
+
+    //LOG IN
+    @GetMapping("/perfil")
+    public ResponseEntity<SocioResponseDTO> obtenerPerfil(
+            @AuthenticationPrincipal Jwt jwt) {
+        Socio socio = socioService.obtenerOCrearSocio(jwt);
+        return ResponseEntity.ok(socioMapper.toResponse(socio));
+    }
+
+    // Solo admin puede cambiar roles
+    @PatchMapping("/{id}/rol")
+    public ResponseEntity<Void> cambiarRol(
+            @PathVariable Long id,
+            @RequestParam String rol,
+            @AuthenticationPrincipal Jwt jwt) {
+        authUtils.verificarAdmin(jwt);
+        socioService.cambiarRol(id, rol);
+        return ResponseEntity.noContent().build();
     }
 
     //UPDATE SOCIO
