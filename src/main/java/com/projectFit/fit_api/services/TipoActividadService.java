@@ -7,9 +7,9 @@ import com.projectFit.fit_api.exception.BusinessException;
 import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.TipoActividadMapper;
 import com.projectFit.fit_api.repository.TipoActividadRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,6 +56,7 @@ public class TipoActividadService {
     }
 
     //GET TipoActividad por ID
+    @Transactional(readOnly = true)
     public TipoActividadResponseDTO obtenerPorId(Long id){
         TipoActividad tipoActividad = tipoActividadRepository.findByIdAndFechaHoraBajaActividadIsNull(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
@@ -64,6 +65,7 @@ public class TipoActividadService {
     }
 
     //GET ALL TipoActividad
+    @Transactional(readOnly = true)
     public List<TipoActividadResponseDTO> obtenerTodas(){
         return tipoActividadRepository.findByFechaHoraBajaActividadIsNull()
                 .stream()

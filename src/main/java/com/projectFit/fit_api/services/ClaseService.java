@@ -10,9 +10,9 @@ import com.projectFit.fit_api.mappers.ClaseMapper;
 import com.projectFit.fit_api.repository.ClaseRepository;
 import com.projectFit.fit_api.repository.SocioRepository;
 import com.projectFit.fit_api.repository.TipoActividadRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,6 +66,7 @@ public class ClaseService {
     }
 
     //GET CLASE POR ID
+    @Transactional(readOnly = true)
     public ClaseResponseDTO obtenerPorId(Long id) {
         Clase clase = claseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Clase no encontrada"));
@@ -73,6 +74,7 @@ public class ClaseService {
     }
 
     //GET CLASES POR TIPO ACTIVIDAD
+    @Transactional(readOnly = true)
     public List<ClaseResponseDTO> obtenerPorTipoActividad(Long tipoActividadId) {
         return claseRepository.clasesDisponiblesPorTipoActividad(tipoActividadId)
                 .stream()
@@ -81,6 +83,7 @@ public class ClaseService {
     }
 
     //GET CLASES DISPONIBLES PARA RESERVAR SEGUN EL PLAN DEL SOCIO
+    @Transactional(readOnly = true)
     public List<ClaseResponseDTO> obtenerClasesDisponiblesParaSocio(String auth0Id){
 
         Socio socio = socioRepository.findByAuth0Id(auth0Id)

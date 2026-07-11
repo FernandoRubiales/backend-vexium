@@ -13,10 +13,10 @@ import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.SocioMapper;
 import com.projectFit.fit_api.repository.RolRepository;
 import com.projectFit.fit_api.repository.SocioRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -43,6 +43,10 @@ public class SocioService {
 
         Socio socio = socioMapper.toEntity(socioRequestDTO);
         socio.setQrCode(UUID.randomUUID().toString());
+        //Buscamos el rol "SOCIO"
+        Rol rolSocio = rolRepository.findByNombreRol("SOCIO")
+                .orElseThrow(() -> new ResourceNotFoundException("Rol por defecto no configurado"));
+        socio.setRol(rolSocio);
         Socio socioGuardado = socioRepository.save(socio);
         return socioMapper.toResponse(socioGuardado);
     }
@@ -70,7 +74,15 @@ public class SocioService {
                 });
     }
     //CHANGE ROL
+    public void cambiarRol(Long id, String nuevoRol){
+        Socio socioExistente = socioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
+        Rol rolNuevo = rolRepository.findByNombreRol(nuevoRol)
+                .orElseThrow(() -> new ResourceNotFoundException("El rol ingresado no existe"));
 
+        socioExistente.setRol(rolNuevo);
+        socioRepository.save(socioExistente);
+    }
 
     //UPDATE SOCIO
     public SocioResponseDTO actualizarSocio(Long id, SocioRequestDTO socioRequestDTO){

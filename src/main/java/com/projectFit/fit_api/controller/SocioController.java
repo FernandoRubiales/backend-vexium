@@ -27,6 +27,7 @@ public class SocioController {
 
     //CREATE SOCIO
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioResponseDTO> crearSocio(@Valid @RequestBody SocioRequestDTO socioRequestDTO){
         SocioResponseDTO socioResponse = socioService.crearSocio(socioRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(socioResponse);
@@ -40,19 +41,20 @@ public class SocioController {
         Socio socio = socioService.obtenerOCrearSocio(jwt);
         return ResponseEntity.ok(socioMapper.toResponse(socio));
     }
+
     //Solo admin puede cambiar roles
     @PatchMapping("/{id}/cambiar-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> cambiarRol(
             @PathVariable Long id,
-            @RequestParam String rol) {
+            @RequestParam String nuevoRol) {
         socioService.cambiarRol(id, nuevoRol);
         return ResponseEntity.noContent().build();
-
     }
 
     //UPDATE SOCIO
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioResponseDTO> actualizarSocio(
             @PathVariable Long id,
             @Valid @RequestBody SocioRequestDTO socioRequestDTO) {
@@ -61,6 +63,7 @@ public class SocioController {
 
     //DELETE SOCIO
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> eliminarSocio(@PathVariable Long id) {
         socioService.eliminarSocio(id);
         return ResponseEntity.noContent().build();
@@ -68,12 +71,14 @@ public class SocioController {
 
     //GET SOCIO ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(socioService.obtenerPorId(id));
     }
 
     //GET ALL SOCIOS
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<List<SocioResponseDTO>> obtenerTodos() {
         return ResponseEntity.ok(socioService.obtenerTodos());
     }
