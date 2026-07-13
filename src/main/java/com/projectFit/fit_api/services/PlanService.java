@@ -9,9 +9,9 @@ import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.PlanMapper;
 import com.projectFit.fit_api.repository.PlanRepository;
 import com.projectFit.fit_api.repository.TipoActividadRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,14 +23,14 @@ public class PlanService {
 
     private final PlanRepository planRepository;
     private final PlanMapper planMapper;
-    private final TipoActividadRepository tipoActividadRespository;
+    private final TipoActividadRepository tipoActividadRepository;
 
     //CREATE PLAN
     public PlanResponseDTO crearPlan(PlanRequestDTO planRequestDTO){
         if(planRepository.existsByNombrePlan(planRequestDTO.getNombrePlan())){
             throw new BusinessException("Ya existe un plan con ese nombre");
         }
-        TipoActividad tipoActividad = tipoActividadRespository.findById(planRequestDTO.getTipoActividadId())
+        TipoActividad tipoActividad = tipoActividadRepository.findById(planRequestDTO.getTipoActividadId())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra ese tipo de actividad"));
 
         Plan plan = planMapper.toEntity(planRequestDTO);
@@ -46,7 +46,7 @@ public class PlanService {
         Plan planExistente = planRepository.findByIdAndFechaHoraBajaPlanIsNull(id).
                 orElseThrow(() -> new ResourceNotFoundException("Plan no encontrado"));
 
-        TipoActividad tipoActividad = tipoActividadRespository.findByIdAndFechaHoraBajaActividadIsNull(planRequestDTO.getTipoActividadId()).
+        TipoActividad tipoActividad = tipoActividadRepository.findByIdAndFechaHoraBajaActividadIsNull(planRequestDTO.getTipoActividadId()).
                 orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
 
         planExistente.setNombrePlan(planRequestDTO.getNombrePlan());
@@ -71,6 +71,7 @@ public class PlanService {
     }
 
     //GET PLAN por ID
+    @Transactional(readOnly = true)
     public PlanResponseDTO obtenerPorId(Long id){
         Plan planExistente = planRepository.findByIdAndFechaHoraBajaPlanIsNull(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Plan no encontrado"));
@@ -79,6 +80,7 @@ public class PlanService {
     }
 
     //GET ALL PLAN
+    @Transactional(readOnly = true)
     public List<PlanResponseDTO> obtenerTodos() {
         return planRepository.findByFechaHoraBajaPlanIsNull()
                 .stream()
@@ -87,6 +89,7 @@ public class PlanService {
     }
 
     //GET ALL PLAN por TipoActividad
+    @Transactional(readOnly = true)
     public List<PlanResponseDTO> obtenerPorActividad(Long tipoActividadId) {
         return planRepository.planesActivosPorActividad(tipoActividadId)
                 .stream()

@@ -9,9 +9,9 @@ import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.PagoMapper;
 import com.projectFit.fit_api.repository.PagoRepository;
 import com.projectFit.fit_api.repository.SocioPlanRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -43,7 +43,7 @@ public class PagoService {
         return pagoMapper.toResponse(pago);
     }
 
-    //PAGO CON MERCADO PAGO REALIZADO POR LA APP, mp llama a este endpoint
+    //PAGO CON MERCADO PAGO REALIZADO POR LA APP
     public void procesarWebhookMercadoPago(String mpPaymentId, Long socioPlanId){
         pagoRepository.findByMpPaymentId(mpPaymentId).ifPresent(p -> {
             throw new BusinessException("Pago ya procesado");

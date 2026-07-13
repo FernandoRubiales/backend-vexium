@@ -13,9 +13,9 @@ import com.projectFit.fit_api.repository.ClaseRepository;
 import com.projectFit.fit_api.repository.ReservaRepository;
 import com.projectFit.fit_api.repository.SocioPlanRepository;
 import com.projectFit.fit_api.repository.SocioRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

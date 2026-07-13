@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class SocioPlanController {
 
     //ELEGIR PLAN
     @PostMapping
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<SocioPlanResponseDTO> elegirPlan(
             @Valid @RequestBody SocioPlanRequestDTO socioPlanRequestDTO,
             @AuthenticationPrincipal Jwt jwt) {
@@ -31,6 +33,7 @@ public class SocioPlanController {
 
     //CUANDO SE ACEPTE EL PAGO, SE ACTIVA EL PLAN DEL SOCIO
     @PutMapping("/{id}/activar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioPlanResponseDTO> activarPlan(
             @PathVariable Long id) {
         return ResponseEntity.ok(socioPlanService.activarPlan(id));
@@ -38,6 +41,7 @@ public class SocioPlanController {
 
     //GET DE LOS PLANES ACTIVOS DEL SOCIO
     @GetMapping("/activos")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<List<SocioPlanResponseDTO>> obtenerPlanesActivos(
             @AuthenticationPrincipal Jwt jwt){
         return ResponseEntity.ok(socioPlanService.obtenerPlanesActivos(jwt.getSubject()));
@@ -45,6 +49,7 @@ public class SocioPlanController {
 
     //GET DE PLANES PENDIENTES DEL SOCIO POR DNI
     @GetMapping("/pendientes/dni/{dni}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<List<SocioPlanResponseDTO>> obtenerPlanesPendientesPorDni(
             @PathVariable Long dni) {
         return ResponseEntity.ok(

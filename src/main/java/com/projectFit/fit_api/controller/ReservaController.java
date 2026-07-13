@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class ReservaController {
 
     //REALIZAR UNA RESERVA
     @PostMapping
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<ReservaResponseDTO> realizarReserva(
             @Valid @RequestBody ReservaRequestDTO reservaRequestDTO,
             @AuthenticationPrincipal Jwt jwt){
@@ -31,6 +33,7 @@ public class ReservaController {
 
     //CANCELAR UNA RESERVA
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<Void> cancelarReserva(@PathVariable Long id,  @AuthenticationPrincipal Jwt jwt){
         reservaService.cancelarReserva(id, jwt.getSubject());
         return ResponseEntity.noContent().build();
@@ -38,12 +41,14 @@ public class ReservaController {
 
     //GET DE MIS RESERVAS
     @GetMapping("/mis-reservas")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<List<ReservaResponseDTO>> obtenerMisReservas(@AuthenticationPrincipal Jwt jwt){
         return ResponseEntity.ok().body(reservaService.obtenerMisReservas(jwt.getSubject()));
     }
 
     //GET RESERVAS DE UNA CLASE
     @GetMapping("/clase/{claseId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<List<ReservaResponseDTO>> obtenerReservasDeClase(@PathVariable Long claseId){
         return ResponseEntity.ok().body(reservaService.obtenerReservasDeClase(claseId));
     }

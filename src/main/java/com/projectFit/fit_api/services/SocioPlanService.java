@@ -10,9 +10,9 @@ import com.projectFit.fit_api.exception.BusinessException;
 import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.SocioPlanMapper;
 import com.projectFit.fit_api.repository.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,6 +76,7 @@ public class SocioPlanService {
         return socioPlanMapper.toResponse(socioPlanGuardado);
     }
     //GET DE LOS PLANES ACTIVOS DEL SOCIO
+    @Transactional(readOnly = true)
     public List<SocioPlanResponseDTO> obtenerPlanesActivos(String auth0Id){
         Socio socio = socioRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
@@ -86,6 +87,7 @@ public class SocioPlanService {
     }
 
     //GET DE PLANES PENDIENTES DEL SOCIO POR DNI
+    @Transactional(readOnly = true)
     public List<SocioPlanResponseDTO> obtenerPlanesPendientesPorDni(Long dni) {
         Socio socio = socioRepository.findByDni(dni)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
