@@ -42,7 +42,6 @@ public class SocioService {
         }
 
         Socio socio = socioMapper.toEntity(socioRequestDTO);
-        socio.setQrCode(UUID.randomUUID().toString());
         //Buscamos el rol "SOCIO"
         Rol rolSocio = rolRepository.findByNombreRol("SOCIO")
                 .orElseThrow(() -> new ResourceNotFoundException("Rol por defecto no configurado"));
@@ -68,7 +67,6 @@ public class SocioService {
                     nuevo.setEmail(email);
                     nuevo.setNombre(nombre != null ? nombre : email);
                     nuevo.setApellido(apellido != null ? apellido : "");
-                    nuevo.setQrCode(UUID.randomUUID().toString());
                     nuevo.setRol(rolSocio);
                     return socioRepository.save(nuevo);
                 });
@@ -119,18 +117,4 @@ public class SocioService {
                 .collect(Collectors.toList());
     }
 
-    //GENERAR IMAGEN QR
-    public byte[] generarImagenQr(String auth0Id) throws Exception {
-        Socio socio = socioRepository.findByAuth0Id(auth0Id)
-                .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
-
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(
-                socio.getQrCode(),
-                BarcodeFormat.QR_CODE, 300, 300);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
-        return outputStream.toByteArray();
-    }
 }

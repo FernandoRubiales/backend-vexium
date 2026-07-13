@@ -48,9 +48,6 @@ public class Socio {
     @Column(nullable = false)
     private Integer telefono;
 
-    @Column(unique = true)
-    private String qrCode;
-
     @Column(nullable = false)
     private LocalDate fechaNacimiento;
 

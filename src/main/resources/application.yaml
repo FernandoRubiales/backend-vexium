@@ -38,6 +38,9 @@ spring:
     enabled: false
 
 app:
+  mercadopago:
+    access-token:
+    notification-url:
   qr:
     size: 300
     format: PNG

@@ -83,14 +83,5 @@ public class SocioController {
         return ResponseEntity.ok(socioService.obtenerTodos());
     }
 
-    //GENERAR IMAGEN QR
-    @GetMapping("/qr")
-    public ResponseEntity<byte[]> obtenerQr(
-            @AuthenticationPrincipal Jwt jwt) throws Exception {
-        byte[] qrImage = socioService.generarImagenQr(jwt.getSubject());
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(qrImage);
-    }
 
 }
