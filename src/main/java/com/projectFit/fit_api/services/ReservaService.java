@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -55,14 +57,14 @@ public class ReservaService {
 
         //Validar que no tenga reserva del mismo tipo de actividad, para el mismo dia
         List<Reserva> reservasMismaActividad = reservaRepository.reservasPorDiayTipoActividad(
-                socio.getId(), clase.getTipoActividad().getId());
+                socio.getId(), clase.getDiaSemana(), clase.getTipoActividad().getId());
 
         if(!reservasMismaActividad.isEmpty()){
-            throw new BusinessException("Ya tenés una reserva de " + clase.getTipoActividad().getNombreTipoActividad() + " ese día");
+            throw new BusinessException("Ya tenés una reserva de " + clase.getTipoActividad().getNombreTipoActividad() + " el dia " + clase.getDiaSemana());
         }
         //Validar que en el mismo horario no tenga otra reserva ese dia
         List<Reserva> reservasMismoHorario = reservaRepository.reservasMismoHorario(
-                socio.getId(), clase.getHoraFin().toString(), clase.getHoraInicio().toString());
+                socio.getId(),clase.getDiaSemana(), clase.getHoraFin().toString(), clase.getHoraInicio().toString());
 
         if (!reservasMismoHorario.isEmpty()) {
             throw new BusinessException("Ya tenés una reserva en ese horario");
@@ -76,7 +78,10 @@ public class ReservaService {
         reserva.setClase(clase);
         reserva.setSocioPlan(socioPlan);
         reserva.setFechaHoraReserva(LocalDateTime.now());
-        reserva.setFechaClaseReservada(LocalDate.now());
+
+        //Descontamos  el cupo del plan del socio
+        socioPlan.setClasesDisponibles(socioPlan.getClasesDisponibles() - 1);
+        socioPlanRepository.save(socioPlan);
 
         return reservaMapper.toResponse(reservaRepository.save(reserva));
     }
@@ -94,16 +99,28 @@ public class ReservaService {
             throw new BusinessException("No podés cancelar esta reserva");
         }
 
-        //Verificar que falte 1 hora o mas para la clase, asi es posible cancelarla
-        LocalTime horaMaximaPermitida = reserva.getClase().getHoraInicio().minusHours(1); //restamos 1 hora para el maximo limite
-        if(LocalTime.now().isAfter(horaMaximaPermitida)){
-            throw new BusinessException("No podes cancelar una reserva faltando menos de 1 hora para empezar la clase");
+        //Obtener el nombre del dia de hoy
+        String diaActual =  LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es"));
+        String diaFormateado = diaActual.substring(0,1).toUpperCase() + diaActual.substring(1);
+
+        //Si hoy es el dia de la clase, conrolar el limite de 1 hora para cancelar la reserva
+        if(reserva.getClase().getDiaSemana().equalsIgnoreCase(diaFormateado)){
+            LocalTime horaMaximaPermitida = reserva.getClase().getHoraInicio().minusMinutes(10);
+            if (LocalTime.now().isAfter(horaMaximaPermitida)) {
+                throw new BusinessException("No podés cancelar una reserva faltando menos de 30 minutos para empezar la clase");
+            }
         }
+
+        //Si cancela, devolvemos el cupo mensual al socio
+        SocioPlan socioPlan = reserva.getSocioPlan();
+        socioPlan.setClasesDisponibles(socioPlan.getClasesDisponibles() + 1);
+        socioPlanRepository.save(socioPlan);
 
         reservaRepository.delete(reserva);
     }
 
     //GET DE MIS RESERVAS
+    @Transactional(readOnly = true)
     public List<ReservaResponseDTO> obtenerMisReservas(String auth0Id){
         Socio socio = socioRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
@@ -115,6 +132,7 @@ public class ReservaService {
     }
 
     //GET RESERVAS DE UNA CLASE
+    @Transactional(readOnly = true)
     public List<ReservaResponseDTO> obtenerReservasDeClase(Long claseId){
         return reservaRepository.obtenerTodasLasReservasDeClase(claseId)
                 .stream()

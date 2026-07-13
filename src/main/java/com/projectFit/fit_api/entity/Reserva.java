@@ -24,9 +24,6 @@ public class Reserva {
     @Column(nullable = false)
     private LocalDateTime fechaHoraReserva;
 
-    @Column(nullable = false)
-    private LocalDate fechaClaseReservada;
-
     //RELACIONES
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clase_id")
