@@ -11,8 +11,6 @@ public class MercadoPagoConfiguration {
     @Value("${app.mercadopago.access-token}")
     private String accessToken;
 
-    // Se ejecuta cuando levanta la app
-    // Configura el SDK de MercadoPago con tu access token
     @PostConstruct
     public void init() {
         MercadoPagoConfig.setAccessToken(accessToken);
