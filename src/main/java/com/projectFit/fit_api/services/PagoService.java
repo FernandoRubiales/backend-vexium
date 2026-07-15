@@ -1,11 +1,13 @@
 package com.projectFit.fit_api.services;
 
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import com.projectFit.fit_api.dto.PagoRequestDTO;
 import com.projectFit.fit_api.dto.PagoResponseDTO;
@@ -39,6 +41,12 @@ public class PagoService {
         SocioPlan socioPlan = socioPlanRepository.findById(socioPlanId)
                 .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
 
+        if (!socioPlan.getEstadoSocioPlan()
+                .getNombreEstadoSocioPlan().equals("Pendiente")) {
+            throw new BusinessException(
+                    "Este plan no está pendiente de pago");
+        }
+
         //Creamos el item para la pantalla de MP
         PreferenceItemRequest item = PreferenceItemRequest.builder()
                 .title("Plan: " + socioPlan.getPlan().getNombrePlan())
@@ -52,24 +60,24 @@ public class PagoService {
 
         PreferenceRequest preferenceRequest  = PreferenceRequest.builder()
                 .items(items)
-                .notificationUrl("https://tu-dominio-backend.com/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
+                .notificationUrl("https://mountable-maroon-breezy.ngrok-free.dev/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
                 .externalReference(socioPlanId.toString())
                 .backUrls(PreferenceBackUrlsRequest.builder()
-                        .success("http://localhost:5173/pago/exitoso") //redireccion si el pago fue exitoso
-                        .failure("http://localhost:5173/pago/fallido")
-                        .pending("http://localhost:5173/pago/pendiente")
+                        .success("") //redireccion si el pago fue exitoso
+                        .failure("")
+                        .pending("")
                         .build())
                 .autoReturn("approved")
                 .build();
 
-        //Le mandamos la preferencia a Mercado pago y obtenemos la url del pago
-        PreferenceClient client = new PreferenceClient();
-
         try {
+            //Le mandamos la preferencia a Mercado pago y obtenemos la url del pago
+            PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
             return preference.getInitPoint(); //url donde va a pagar
         } catch (MPException | MPApiException e) {
+            e.printStackTrace();
             throw new BusinessException("Error al crear preferencia de pago: " + e.getMessage());
         }
     }
@@ -79,13 +87,19 @@ public class PagoService {
         SocioPlan socioPlan = socioPlanRepository.findById(pagoRequestDTO.getSocioPlanId())
                 .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
 
+        // Verificar que esté PENDIENTE
+        if (!socioPlan.getEstadoSocioPlan()
+                .getNombreEstadoSocioPlan().equals("Pendiente")) {
+            throw new BusinessException(
+                    "Este plan no está pendiente de pago");
+        }
+
         Pago pago = new Pago();
         pago.setSocioPlan(socioPlan);
         pago.setMetodoAbonado("Efectivo");
         pago.setFechaHoraPago(LocalDateTime.now());
         pago.setMontoPago(pagoRequestDTO.getMontoPago());
         pago.setMpPaymentId(null); //null cuando es efectivo el metodo abonado
-
         pagoRepository.save(pago);
         //Una vez realizado el pago se debe activar el plan del socio
         socioPlanService.activarPlan(socioPlan.getId());
@@ -93,22 +107,38 @@ public class PagoService {
     }
 
     //PAGO CON MERCADO PAGO REALIZADO POR LA APP
-    public void procesarWebhookMercadoPago(String mpPaymentId, Long socioPlanId){
+    public void procesarWebhookMercadoPago(String mpPaymentId){
         pagoRepository.findByMpPaymentId(mpPaymentId).ifPresent(p -> {
             throw new BusinessException("Pago ya procesado");
         });
-        SocioPlan socioPlan = socioPlanRepository.findById(socioPlanId)
-                .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
 
-        Pago pago = new Pago();
-        pago.setSocioPlan(socioPlan);
-        pago.setMetodoAbonado("MercadoPago");
-        pago.setMontoPago(socioPlan.getPlan().getPrecio());
-        pago.setFechaHoraPago(LocalDateTime.now());
-        pago.setMpPaymentId(mpPaymentId);
+        try{
+            //Consultamos el detalle del pago
+            PaymentClient paymentClient = new PaymentClient();
+            Payment payment = paymentClient.get(Long.parseLong(mpPaymentId));
 
-        pagoRepository.save(pago);
-        //Una vez realizado el pago se debe activar el plan del socio
-        socioPlanService.activarPlan(socioPlan.getId());
+            //Se procesa pagos aprobados
+            if (!"approved".equals(payment.getStatus())) {
+                return;
+            }
+            // Recuperamos el socioPlanId del externalReference
+            Long socioPlanId = Long.parseLong(payment.getExternalReference());
+            SocioPlan socioPlan = socioPlanRepository.findById(socioPlanId)
+                    .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
+
+            Pago pago = new Pago();
+            pago.setSocioPlan(socioPlan);
+            pago.setMetodoAbonado("MercadoPago");
+            pago.setMontoPago(payment.getTransactionAmount());
+            pago.setFechaHoraPago(LocalDateTime.now());
+            pago.setMpPaymentId(mpPaymentId);
+            pagoRepository.save(pago);
+            //Una vez realizado el pago se debe activar el plan del socio
+            socioPlanService.activarPlan(socioPlan.getId());
+        }catch (MPException | MPApiException e){
+            throw new BusinessException(
+                    "Error al procesar webhook: " + e.getMessage());
+        }
+
     }
 }

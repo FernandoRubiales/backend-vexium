@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /Vexium
+    context-path: /vexium
 
 spring:
   application:
@@ -39,8 +39,8 @@ spring:
 
 app:
   mercadopago:
-    access-token:
-    notification-url:
+    access-token: APP_USR-1756198843857397-071316-5dd3feb3465105c2fe46030449156be4-3538197051
+
   qr:
     size: 300
     format: PNG

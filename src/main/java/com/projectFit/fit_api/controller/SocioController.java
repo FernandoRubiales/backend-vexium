@@ -26,7 +26,7 @@ public class SocioController {
     private final SocioMapper socioMapper;
 
     //CREATE SOCIO
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioResponseDTO> crearSocio(@Valid @RequestBody SocioRequestDTO socioRequestDTO){
         SocioResponseDTO socioResponse = socioService.crearSocio(socioRequestDTO);

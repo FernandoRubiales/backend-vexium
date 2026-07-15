@@ -24,7 +24,7 @@ public class PagoController {
 
     //Iniciar el pago con Mercado Pago
     @PostMapping("/checkout/{socioPlanId}")
-    @PreAuthorize("hasRole('SOCIO')")
+   // @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<String> iniciarPagoMp(@PathVariable Long socioPlanId, @AuthenticationPrincipal Jwt jwt){
 
         String urlPago = pagoService.creacionPreferenciaPago(socioPlanId);
@@ -42,28 +42,13 @@ public class PagoController {
     //PAGO CON MERCADO PAGO REALIZADO POR LA APP, mp llama a este endpoint
     @PostMapping("/webhook/mercadopago")
     public ResponseEntity<Void> webhookMercadoPago(
-            @RequestParam(value = "topic", required = false) String topic,
-            @RequestParam(value = "type", required = false) String type,
             @RequestBody Map<String, Object> payload){
 
-        //Tipo de evento que envia Mercado Pago
-        String tipoEvento = (type != null) ? type : (String) payload.get("type");
-
-        //Si no es de tipo pago, la ignoramos pero respondemos 200/204 para que no reintente
-        if (!"payment".equalsIgnoreCase(tipoEvento)) {
-            return ResponseEntity.noContent().build();
+        //Solo importa las de tipo "payment"
+        if ("payment".equals(payload.get("type"))) {
+            String mpPaymentId = payload.get("id").toString();
+            pagoService.procesarWebhookMercadoPago(mpPaymentId);
         }
-
-        //Extraemos el id del pago
-        Map<String, Object> data = (Map<String, Object>) payload.get("data");
-        if (data == null || data.get("id") == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        String mpPaymentId = data.get("id").toString();
-        Long socioPlanId = Long.parseLong(
-                payload.get("external_reference").toString());
-        pagoService.procesarWebhookMercadoPago(mpPaymentId, socioPlanId);
         return ResponseEntity.ok().build();
     }
-
 }

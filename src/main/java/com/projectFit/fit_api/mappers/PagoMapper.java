@@ -12,5 +12,6 @@ public interface PagoMapper {
     @Mapping(source = "socioPlan.socio.nombre", target = "nombreSocio")
     @Mapping(source = "socioPlan.socio.apellido", target = "apellidoSocio")
     @Mapping(source = "socioPlan.plan.nombrePlan", target = "nombrePlan")
+    @Mapping(source = "metodoAbonado", target = "metodoAbonado")
     PagoResponseDTO toResponse(Pago pago);
 }

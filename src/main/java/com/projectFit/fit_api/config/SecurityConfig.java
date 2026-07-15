@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/pagos/webhook/**").permitAll()
+                        .requestMatchers("/pagos/checkout/**").permitAll()
                         .anyRequest().authenticated() // Todo lo demás pide estar logueado
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
