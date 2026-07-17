@@ -27,7 +27,7 @@ public class SocioRequestDTO {
     private String email;
 
     @NotBlank(message = "Teléfono obligatorio")
-    private Integer telefono;
+    private String telefono;
 
     private LocalDate fechaNacimiento;
 

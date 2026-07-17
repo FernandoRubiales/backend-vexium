@@ -12,7 +12,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://dev-v0gmsrszibirwhyd.us.auth0.com/
-          jwk-set-uri: https://dev-v0gmsrszibirwhyd.us.auth0.com/.well-known/jwks.json
+          audience: https://vexium-api.com
 
   datasource:
     url: jdbc:postgresql://localhost:5432/fit_db
@@ -36,16 +36,3 @@ spring:
 
   flyway:
     enabled: false
-
-app:
-  mercadopago:
-    access-token: APP_USR-1756198843857397-071316-5dd3feb3465105c2fe46030449156be4-3538197051
-
-  qr:
-    size: 300
-    format: PNG
-  notificaciones:
-    dias-aviso-primero: 7
-    dias-aviso-segundo: 1
-  auth0:
-    audience: https://vexium-api.com

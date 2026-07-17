@@ -44,10 +44,21 @@ public class PagoController {
     public ResponseEntity<Void> webhookMercadoPago(
             @RequestBody Map<String, Object> payload){
 
+        System.out.println("====== WEBHOOK RECIBIDO ======");
+        System.out.println("Payload completo: " + payload);
         //Solo importa las de tipo "payment"
         if ("payment".equals(payload.get("type"))) {
-            String mpPaymentId = payload.get("id").toString();
-            pagoService.procesarWebhookMercadoPago(mpPaymentId);
+            Map<String, Object> data = (Map<String, Object>) payload.get("data");
+
+            if (data != null && data.get("id") != null) {
+                String mpPaymentId = data.get("id").toString();
+                System.out.println("Procesando Pago ID Real: " + mpPaymentId);
+                pagoService.procesarWebhookMercadoPago(mpPaymentId);
+            } else {
+                System.out.println("Aviso: El payload no contiene el objeto 'data' o el 'id' del pago.");
+            }
+        }else{
+            System.out.println("Notificación descartada (Type no es 'payment'): " + payload.get("type"));
         }
         return ResponseEntity.ok().build();
     }

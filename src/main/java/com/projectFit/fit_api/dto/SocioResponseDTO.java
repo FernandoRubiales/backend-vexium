@@ -15,7 +15,6 @@ public class SocioResponseDTO {
     private String apellido;
     private Long dni;
     private String email;
-    private Integer telefono;
+    private String telefono;
     private LocalDate fechaNacimiento;
-    private String qrCode;
 }

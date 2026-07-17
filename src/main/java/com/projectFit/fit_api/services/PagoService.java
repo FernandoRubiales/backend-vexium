@@ -1,6 +1,7 @@
 package com.projectFit.fit_api.services;
 
 import com.mercadopago.client.payment.PaymentClient;
+import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
@@ -36,8 +37,11 @@ public class PagoService {
     private final SocioPlanService socioPlanService;
     private final PagoMapper pagoMapper;
 
+    private final String mpAccessToken = "APP_USR-1756198843857397-071316-5dd3feb3465105c2fe46030449156be4-3538197051";
+
     //Creacion de preferencia de pago para el socioPlan
     public String creacionPreferenciaPago(Long socioPlanId){
+        MercadoPagoConfig.setAccessToken(mpAccessToken);
         SocioPlan socioPlan = socioPlanRepository.findById(socioPlanId)
                 .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
 
@@ -60,12 +64,12 @@ public class PagoService {
 
         PreferenceRequest preferenceRequest  = PreferenceRequest.builder()
                 .items(items)
-                .notificationUrl("https://mountable-maroon-breezy.ngrok-free.dev/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
+                .notificationUrl("https://mountable-maroon-breezy.ngrok-free.dev/vexium/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
                 .externalReference(socioPlanId.toString())
                 .backUrls(PreferenceBackUrlsRequest.builder()
-                        .success("") //redireccion si el pago fue exitoso
-                        .failure("")
-                        .pending("")
+                        .success("https://www.google.com/") //redireccion si el pago fue exitoso
+                        .failure("https://www.google.com/")
+                        .pending("https://www.google.com/")
                         .build())
                 .autoReturn("approved")
                 .build();
@@ -108,6 +112,7 @@ public class PagoService {
 
     //PAGO CON MERCADO PAGO REALIZADO POR LA APP
     public void procesarWebhookMercadoPago(String mpPaymentId){
+        MercadoPagoConfig.setAccessToken(mpAccessToken);
         pagoRepository.findByMpPaymentId(mpPaymentId).ifPresent(p -> {
             throw new BusinessException("Pago ya procesado");
         });

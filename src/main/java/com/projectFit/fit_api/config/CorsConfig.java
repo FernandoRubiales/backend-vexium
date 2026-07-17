@@ -29,8 +29,7 @@ public class CorsConfig {
         // Header para los request
         config.setAllowedHeaders(List.of(
                 "Authorization",   // para el  JWT de Auth0
-                "Content-Type",    // para mandar JSON
-                "X-Auth0-Id"       // el header temporal que usamos
+                "Content-Type"  // para mandar JSON
         ));
 
         // Navegador manda cookies y credenciales

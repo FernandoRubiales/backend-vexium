@@ -46,9 +46,9 @@ public class Socio {
 
     @NotBlank(message = "telefono obligatorio")
     @Column(nullable = false)
-    private Integer telefono;
+    private String telefono;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private LocalDate fechaNacimiento;
 
     //RELACIONES

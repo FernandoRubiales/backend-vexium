@@ -63,10 +63,19 @@ public class SocioService {
                     Rol rolSocio = rolRepository.findByNombreRol("SOCIO")
                             .orElseThrow(() -> new ResourceNotFoundException("Rol por defecto no configurado"));
                     Socio nuevo = new Socio();
-                    nuevo.setAuth0Id(auth0Id);
+                    /*nuevo.setAuth0Id(auth0Id);
                     nuevo.setEmail(email);
                     nuevo.setNombre(nombre != null ? nombre : email);
                     nuevo.setApellido(apellido != null ? apellido : "");
+                    nuevo.setRol(rolSocio);*/
+
+                    //PRUEBA
+                    nuevo.setAuth0Id(auth0Id);
+                    nuevo.setEmail(email != null ? email : "test_user_" + auth0Id.substring(0, 5) + "@vexium.com");
+                    nuevo.setNombre(nombre != null ? nombre : "Useruno");
+                    nuevo.setApellido(apellido != null ? apellido : "Test");
+                    nuevo.setDni(123455667L);
+                    nuevo.setTelefono("261000000");
                     nuevo.setRol(rolSocio);
                     return socioRepository.save(nuevo);
                 });
