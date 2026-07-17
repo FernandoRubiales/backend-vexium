@@ -17,4 +17,5 @@ public class SocioResponseDTO {
     private String email;
     private String telefono;
     private LocalDate fechaNacimiento;
+    private String nombreRol;
 }

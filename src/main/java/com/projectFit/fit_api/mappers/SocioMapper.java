@@ -16,6 +16,7 @@ public interface SocioMapper {
     Socio toEntity(SocioRequestDTO socioRequestDTO);
 
     //Entidad Socio  a SocioResponseDTO
+    @Mapping(source = "rol.nombreRol", target = "nombreRol")
     SocioResponseDTO toResponse(Socio socio);
 
 }

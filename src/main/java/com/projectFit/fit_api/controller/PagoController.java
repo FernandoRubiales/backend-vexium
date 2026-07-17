@@ -24,7 +24,7 @@ public class PagoController {
 
     //Iniciar el pago con Mercado Pago
     @PostMapping("/checkout/{socioPlanId}")
-   // @PreAuthorize("hasRole('SOCIO')")
+    @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<String> iniciarPagoMp(@PathVariable Long socioPlanId, @AuthenticationPrincipal Jwt jwt){
 
         String urlPago = pagoService.creacionPreferenciaPago(socioPlanId);

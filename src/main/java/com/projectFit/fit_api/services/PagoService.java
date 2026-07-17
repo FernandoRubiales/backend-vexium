@@ -64,12 +64,12 @@ public class PagoService {
 
         PreferenceRequest preferenceRequest  = PreferenceRequest.builder()
                 .items(items)
-                .notificationUrl("https://mountable-maroon-breezy.ngrok-free.dev/vexium/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
+                .notificationUrl("") //url del webhook cuando el pago se confirme
                 .externalReference(socioPlanId.toString())
                 .backUrls(PreferenceBackUrlsRequest.builder()
-                        .success("https://www.google.com/") //redireccion si el pago fue exitoso
-                        .failure("https://www.google.com/")
-                        .pending("https://www.google.com/")
+                        .success("") //redireccion si el pago fue exitoso (al frontend)
+                        .failure("")
+                        .pending("")
                         .build())
                 .autoReturn("approved")
                 .build();
