@@ -17,7 +17,8 @@ public class CorsConfig {
 
         // Origenes donde se permite el request
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"  // frontend react
+                "http://localhost:5173",
+                "http://localhost:5174"
 
         ));
 

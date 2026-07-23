@@ -54,8 +54,6 @@ public class SocioService {
     public Socio obtenerOCrearSocio(Jwt jwt) {
         String auth0Id = jwt.getSubject();
         String email = jwt.getClaimAsString("email");
-        String nombre = jwt.getClaimAsString("given_name");
-        String apellido = jwt.getClaimAsString("family_name");
 
         return socioRepository.findByAuth0Id(auth0Id)
                 .orElseGet(() -> {
@@ -63,19 +61,8 @@ public class SocioService {
                     Rol rolSocio = rolRepository.findByNombreRol("SOCIO")
                             .orElseThrow(() -> new ResourceNotFoundException("Rol por defecto no configurado"));
                     Socio nuevo = new Socio();
-                    /*nuevo.setAuth0Id(auth0Id);
-                    nuevo.setEmail(email);
-                    nuevo.setNombre(nombre != null ? nombre : email);
-                    nuevo.setApellido(apellido != null ? apellido : "");
-                    nuevo.setRol(rolSocio);*/
-
-                    //PRUEBA
                     nuevo.setAuth0Id(auth0Id);
-                    nuevo.setEmail(email != null ? email : "test_user_" + auth0Id.substring(0, 5) + "@vexium.com");
-                    nuevo.setNombre(nombre != null ? nombre : "Useruno");
-                    nuevo.setApellido(apellido != null ? apellido : "Test");
-                    nuevo.setDni(123455667L);
-                    nuevo.setTelefono("261000000");
+                    nuevo.setEmail(email);
                     nuevo.setRol(rolSocio);
                     return socioRepository.save(nuevo);
                 });

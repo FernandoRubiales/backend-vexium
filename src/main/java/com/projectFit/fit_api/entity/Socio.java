@@ -23,17 +23,10 @@ public class Socio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "nombre obligatorio")
-    @Column(nullable = false)
     private String nombre;
-
-    @NotBlank(message = "apellido obligatorio")
-    @Column(nullable = false)
     private String apellido;
 
-    @NotNull(message = "dni obligatorio")
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private Long dni;
 
     @Column(unique = true)
@@ -44,8 +37,7 @@ public class Socio {
     @Column(nullable = false)
     private String email;
 
-    @NotBlank(message = "telefono obligatorio")
-    @Column(nullable = false)
+
     private String telefono;
 
     //@Column(nullable = false)
