@@ -2,6 +2,7 @@ package com.projectFit.fit_api.services;
 
 import com.projectFit.fit_api.dto.ClaseRequestDTO;
 import com.projectFit.fit_api.dto.ClaseResponseDTO;
+import com.projectFit.fit_api.dto.TipoActividadResponseDTO;
 import com.projectFit.fit_api.entity.Clase;
 import com.projectFit.fit_api.entity.Socio;
 import com.projectFit.fit_api.entity.TipoActividad;
@@ -82,6 +83,13 @@ public class ClaseService {
                 .toList();
     }
 
+    //Agrega cupos disponibles al dto
+    public ClaseResponseDTO calcularCuposDisponibles(Clase clase){
+        ClaseResponseDTO claseResponseDTO = claseMapper.toResponse(clase);
+        claseResponseDTO.setCuposDisponibles(claseRepository.cuposDisponibles(clase.getId()));
+        return claseResponseDTO;
+    }
+
     //GET CLASES DISPONIBLES PARA RESERVAR SEGUN EL PLAN DEL SOCIO
     @Transactional(readOnly = true)
     public List<ClaseResponseDTO> obtenerClasesDisponiblesParaSocio(String auth0Id){
@@ -98,10 +106,13 @@ public class ClaseService {
                 .toList();
     }
 
-    //Agrega cupos disponibles al dto
-    public ClaseResponseDTO calcularCuposDisponibles(Clase clase){
-        ClaseResponseDTO claseResponseDTO = claseMapper.toResponse(clase);
-        claseResponseDTO.setCuposDisponibles(claseRepository.cuposDisponibles(clase.getId()));
-        return claseResponseDTO;
+
+    //GET ALL CLASES
+    @Transactional(readOnly = true)
+    public List<ClaseResponseDTO> obtenerTodas(){
+        return claseRepository.findByFechaHoraBajaClaseIsNull()
+                .stream()
+                .map(claseMapper::toResponse)
+                .toList();
     }
 }

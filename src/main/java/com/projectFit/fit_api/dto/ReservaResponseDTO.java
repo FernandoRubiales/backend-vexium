@@ -12,13 +12,9 @@ import java.time.LocalTime;
 public class ReservaResponseDTO {
 
     private Long id;
-    private LocalDateTime fechaHoraReserva;
-    private String nombreSocio;
-    private String apellidoSocio;
     private String tipoActividad;
     private String diaSemana;
     private LocalDate fechaClaseReservada;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-    private String nombreSede;
 }

@@ -2,6 +2,7 @@ package com.projectFit.fit_api.controller;
 
 import com.projectFit.fit_api.dto.ClaseRequestDTO;
 import com.projectFit.fit_api.dto.ClaseResponseDTO;
+import com.projectFit.fit_api.dto.TipoActividadResponseDTO;
 import com.projectFit.fit_api.services.ClaseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,13 @@ public class ClaseController {
     public ResponseEntity<List<ClaseResponseDTO>> obtenerPorTipoActividad(
             @PathVariable Long tipoActividadId) {
         return ResponseEntity.ok(claseService.obtenerPorTipoActividad(tipoActividadId));
+    }
+
+    //GET ALL CLASES
+    @GetMapping("/todas")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA', 'SOCIO')")
+    public ResponseEntity<List<ClaseResponseDTO>> obtenerTodas() {
+        return ResponseEntity.ok(claseService.obtenerTodas());
     }
 
     //GET CLASES DISPONIBLES PARA RESERVAR SEGUN EL PLAN DEL SOCIO
