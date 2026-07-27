@@ -42,6 +42,14 @@ public class ReservaService {
         Clase clase = claseRepository.findById(reservaRequestDTO.getClaseId())
                 .orElseThrow(() -> new ResourceNotFoundException("Clase no encontrada"));
 
+        String diaActual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es"));
+        String diaFormateado = diaActual.substring(0, 1).toUpperCase() + diaActual.substring(1);
+
+        if (clase.getDiaSemana().equalsIgnoreCase(diaFormateado)) {
+            if (LocalTime.now().isAfter(clase.getHoraInicio())) {
+                throw new BusinessException("No podés reservar una clase cuyo horario ya pasó");
+            }
+        }
         SocioPlan socioPlan = socioPlanRepository.planActivoporSocioyActividadId(socio.getId(), clase.getTipoActividad().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No tenés un plan activo para esta actividad"));
 
@@ -99,15 +107,13 @@ public class ReservaService {
             throw new BusinessException("No podés cancelar esta reserva");
         }
 
-        //Obtener el nombre del dia de hoy
         String diaActual =  LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es"));
         String diaFormateado = diaActual.substring(0,1).toUpperCase() + diaActual.substring(1);
 
-        //Si hoy es el dia de la clase, conrolar el limite de 1 hora para cancelar la reserva
         if(reserva.getClase().getDiaSemana().equalsIgnoreCase(diaFormateado)){
             LocalTime horaMaximaPermitida = reserva.getClase().getHoraInicio().minusMinutes(10);
             if (LocalTime.now().isAfter(horaMaximaPermitida)) {
-                throw new BusinessException("No podés cancelar una reserva faltando menos de 30 minutos para empezar la clase");
+                throw new BusinessException("No podés cancelar una reserva faltando menos de 10 minutos para empezar la clase");
             }
         }
 
