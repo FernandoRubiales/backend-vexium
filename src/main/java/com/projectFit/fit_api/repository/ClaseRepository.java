@@ -17,7 +17,7 @@ public interface ClaseRepository extends JpaRepository <Clase,Long> {
     //Cupos disponibles para la clase (cupo maximo - cantidad de reservas realizadas)
     @Query(value = "SELECT c.cupo_maximo - COUNT(r.id) FROM clase c " +
             "LEFT JOIN reserva r ON r.clase_id = c.id " +
-            "WHERE c.id = :claseId", nativeQuery = true)
+            "WHERE c.id = :claseId GROUP BY c.id, c.cupo_maximo", nativeQuery = true)
     int cuposDisponibles(@Param("claseId") Long claseId);
 
 

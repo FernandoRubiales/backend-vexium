@@ -64,23 +64,27 @@ public class PagoService {
 
         PreferenceRequest preferenceRequest  = PreferenceRequest.builder()
                 .items(items)
-                .notificationUrl("") //url del webhook cuando el pago se confirme
+                .notificationUrl("https://mountable-maroon-breezy.ngrok-free.dev/vexium/pagos/webhook/mercadopago") //url del webhook cuando el pago se confirme
                 .externalReference(socioPlanId.toString())
                 .backUrls(PreferenceBackUrlsRequest.builder()
-                        .success("") //redireccion si el pago fue exitoso (al frontend)
-                        .failure("")
-                        .pending("")
+                        .success("http://localhost:5173/socio/mis-planes") //redireccion si el pago fue exitoso (al frontend)
+                        .failure("http://localhost:5173/socio/mis-planes")
+                        .pending("http://localhost:5173/socio/mis-planes")
                         .build())
-                .autoReturn("approved")
                 .build();
 
         try {
-            //Le mandamos la preferencia a Mercado pago y obtenemos la url del pago
+            // Le mandamos la preferencia a Mercado pago y obtenemos la url del pago
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
-
-            return preference.getInitPoint(); //url donde va a pagar
-        } catch (MPException | MPApiException e) {
+            return preference.getInitPoint(); // url donde va a pagar
+        } catch (MPApiException e) {
+            // Imprime el código de estado HTTP y el JSON detallado del error de Mercado Pago en tu consola
+            System.err.println("Código de estado de Mercado Pago: " + e.getApiResponse().getStatusCode());
+            System.err.println("Detalle del error de Mercado Pago: " + e.getApiResponse().getContent());
+            e.printStackTrace();
+            throw new BusinessException("Error al crear preferencia de pago (MP API): " + e.getApiResponse().getContent());
+        } catch (MPException e) {
             e.printStackTrace();
             throw new BusinessException("Error al crear preferencia de pago: " + e.getMessage());
         }

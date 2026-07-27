@@ -12,52 +12,56 @@ import java.util.Optional;
 @Repository
 public interface SocioPlanRepository extends JpaRepository<SocioPlan, Long> {
 
-    //Query para verificar si el socio ya tiene ese plan activo
-    @Query(value = "SELECT sp.* FROM socio_plan sp" +
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id"+
-            "WHERE sp.socio_id = :socioId"+
-            "AND sp.plan_id = :planId"+
-            "AND esp.nombre_estado_socio_plan = 'Activo'"
-            , nativeQuery = true)
+    // Query para verificar si el socio ya tiene ese plan activo
+    @Query(value = "SELECT sp.* FROM socio_plan sp " +
+            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "WHERE sp.socio_id = :socioId " +
+            "AND sp.plan_id = :planId " +
+            "AND esp.nombre_estado_socio_plan = 'Activo'",
+            nativeQuery = true)
     Optional<SocioPlan> planActivoporSocioyPlanId(
             @Param("socioId") Long socioId,
             @Param("planId") Long planId);
 
-    //Query para obtener los planes activos del socio
-    @Query(value = "SELECT sp.* FROM socio_plan"+
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id"+
-            "WHERE sp.socio_id = :socioId"+
-            "AND esp.nombre_estado_socio_plan = 'Activo' ",
+    // Query para obtener los planes activos del socio
+    @Query(value = "SELECT sp.* FROM socio_plan sp " +
+            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "WHERE sp.socio_id = :socioId " +
+            "AND esp.nombre_estado_socio_plan = 'Activo'",
             nativeQuery = true)
     List<SocioPlan> planesActivosBySocioId(@Param("socioId") Long socioId);
 
-    //Query para obtener los planes pendientes del socio
-    @Query(value = "SELECT sp.* FROM socio_plan sp "+
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id"+
-            "WHERE sp.socio_id = :socioId"+
-            "AND esp.nombre_estado_socio_plan = 'Pendiente'", nativeQuery = true)
+    // Query para obtener los planes pendientes del socio
+    @Query(value = "SELECT sp.* FROM socio_plan sp " +
+            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "WHERE sp.socio_id = :socioId " +
+            "AND esp.nombre_estado_socio_plan = 'Pendiente'",
+            nativeQuery = true)
     List<SocioPlan> planesPendientesPorSocioId(@Param("socioId") Long socioId);
 
-    //Query para verificar si el socio tiene una plan activo para ese tipo de actividad
-    @Query(value = "SELECT sp.* FROM socio_plan sp"+
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id" +
-            "JOIN plan p ON sp.plan.id = p.id" +
-            "WHERE sp.socio_id = :socioId" +
-            "AND p.tipo_actividad.id = :tipoActividadId" +
-            "AND esp.nombre_estado_socio_plan = 'Activo'", nativeQuery = true)
-    Optional<SocioPlan> planActivoporSocioyActividadId(@Param("socioId") Long socioId,
-                                                       @Param("tipoActividadId") Long tipoActividadId);
+    // Query para verificar si el socio tiene un plan activo para ese tipo de actividad
+    // (Corregido: sp.plan.id -> sp.plan_id  y  p.tipo_actividad.id -> p.tipo_actividad_id)
+    @Query(value = "SELECT sp.* FROM socio_plan sp " +
+            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "JOIN plan p ON sp.plan_id = p.id " +
+            "WHERE sp.socio_id = :socioId " +
+            "AND p.tipo_actividad_id = :tipoActividadId " +
+            "AND esp.nombre_estado_socio_plan = 'Activo'",
+            nativeQuery = true)
+    Optional<SocioPlan> planActivoporSocioyActividadId(
+            @Param("socioId") Long socioId,
+            @Param("tipoActividadId") Long tipoActividadId);
 
-    //Query para buscar plan activo del socio que no requiera reserva de clase
-    @Query(value = "SELECT sp.* FROM socio_plan sp"+
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id"+
-            "JOIN plan p ON sp.plan_id = p.id"+
-            "JOIN tipo_actividad ta ON p.tipo_actividad_id = ta.id "+
-            "WHERE sp.socio_id = :socioId"+
-            "AND esp.nombre_estado_socio_plan = 'Activo' "+
-            "AND ta.requiere_reserva = false "+
-            "AND sp.clases_disponibles > 0"+
-            "LIMIT 1", nativeQuery = true)
+    // Query para buscar plan activo del socio que no requiera reserva de clase
+    @Query(value = "SELECT sp.* FROM socio_plan sp " +
+            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "JOIN plan p ON sp.plan_id = p.id " +
+            "JOIN tipo_actividad ta ON p.tipo_actividad_id = ta.id " +
+            "WHERE sp.socio_id = :socioId " +
+            "AND esp.nombre_estado_socio_plan = 'Activo' " +
+            "AND ta.requiere_reserva = false " +
+            "AND sp.clases_disponibles > 0 " +
+            "LIMIT 1",
+            nativeQuery = true)
     Optional<SocioPlan> planActivoporSocio(@Param("socioId") Long socioId);
-
 }
