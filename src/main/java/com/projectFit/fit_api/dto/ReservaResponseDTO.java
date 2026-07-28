@@ -12,6 +12,7 @@ import java.time.LocalTime;
 public class ReservaResponseDTO {
 
     private Long id;
+    private Long claseId;
     private String tipoActividad;
     private String diaSemana;
     private LocalDate fechaClaseReservada;
