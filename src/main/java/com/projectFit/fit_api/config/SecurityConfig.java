@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/pagos/webhook/**").permitAll()
+                        .requestMatchers("/pagos/webhook/**", "/vexium/pagos/webhook/**").permitAll()
                         .anyRequest().authenticated() // Todo lo demás pide estar logueado
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

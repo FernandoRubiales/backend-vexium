@@ -39,12 +39,12 @@ public class SocioPlanController {
         return ResponseEntity.ok(socioPlanService.activarPlan(id));
     }
 
-    //GET DE LOS PLANES ACTIVOS DEL SOCIO
+    //GET DE LOS PLANES ACTIVOS Y PENDIENTES DEL SOCIO
     @GetMapping("/activos")
     @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<List<SocioPlanResponseDTO>> obtenerPlanesActivos(
             @AuthenticationPrincipal Jwt jwt){
-        return ResponseEntity.ok(socioPlanService.obtenerPlanesActivos(jwt.getSubject()));
+        return ResponseEntity.ok(socioPlanService.obtenerPlanesActivosYPendientes(jwt.getSubject()));
     }
 
     //GET DE PLANES PENDIENTES DEL SOCIO POR DNI

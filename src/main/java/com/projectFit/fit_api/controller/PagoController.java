@@ -38,27 +38,41 @@ public class PagoController {
             @Valid @RequestBody PagoRequestDTO pagoRequestDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(pagoService.realizarPagoEfectivo(pagoRequestDTO));
     }
-    
-    //PAGO CON MERCADO PAGO REALIZADO POR LA APP, mp llama a este endpoint
+
     @PostMapping("/webhook/mercadopago")
     public ResponseEntity<Void> webhookMercadoPago(
             @RequestBody Map<String, Object> payload){
 
         System.out.println("====== WEBHOOK RECIBIDO ======");
         System.out.println("Payload completo: " + payload);
-        //Solo importa las de tipo "payment"
-        if ("payment".equals(payload.get("type"))) {
-            Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
-            if (data != null && data.get("id") != null) {
-                String mpPaymentId = data.get("id").toString();
+        try {
+            String mpPaymentId = null;
+
+            String type = (String) payload.get("type");
+            String topic = (String) payload.get("topic");
+
+            if ("payment".equals(type)) {
+                Map<String, Object> data = (Map<String, Object>) payload.get("data");
+                if (data != null && data.get("id") != null) {
+                    mpPaymentId = data.get("id").toString();
+                }
+            } else if ("payment".equals(topic)) {
+                Object resource = payload.get("resource");
+                if (resource != null) {
+                    mpPaymentId = resource.toString();
+                }
+            }
+            if (mpPaymentId != null) {
                 System.out.println("Procesando Pago ID Real: " + mpPaymentId);
                 pagoService.procesarWebhookMercadoPago(mpPaymentId);
             } else {
-                System.out.println("Aviso: El payload no contiene el objeto 'data' o el 'id' del pago.");
+                System.out.println("Notificación recibida pero sin ID de pago directo.");
             }
-        }else{
-            System.out.println("Notificación descartada (Type no es 'payment'): " + payload.get("type"));
+        } catch (Exception e) {
+            // Esto evita el 502 Bad Gateway y te imprime el error real en tu consola de Spring Boot
+            System.err.println("ERROR CRÍTICO EN WEBHOOK: " + e.getMessage());
+            e.printStackTrace();
         }
         return ResponseEntity.ok().build();
     }

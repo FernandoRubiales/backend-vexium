@@ -36,10 +36,10 @@ public class SocioPlanService {
         Plan plan = planRepository.findByIdAndFechaHoraBajaPlanIsNull(socioPlanRequestDTO.getPlanId())
                 .orElseThrow(() -> new ResourceNotFoundException("Plan no encontrado"));
 
-        //Comprobar que no tenga ese plan activo
-        socioPlanRepository.planActivoporSocioyPlanId(socio.getId(), socioPlanRequestDTO.getPlanId())
+        //Comprobar que no tenga ese plan, sea Activo o Pendiente
+        socioPlanRepository.planActivoyPendienteporSocioyPlanId(socio.getId(), socioPlanRequestDTO.getPlanId())
                 .ifPresent(p -> {
-                    throw new BusinessException("Ya tenés ese plan activo");
+                    throw new BusinessException("Ya tenés ese plan asignado");
                 });
 
         //  Buscar el estado "Pendiente" de un socioPlan
@@ -75,12 +75,12 @@ public class SocioPlanService {
 
         return socioPlanMapper.toResponse(socioPlanGuardado);
     }
-    //GET DE LOS PLANES ACTIVOS DEL SOCIO
+    //GET DE LOS PLANES ACTIVOS Y PENDIENTES DEL SOCIO
     @Transactional(readOnly = true)
-    public List<SocioPlanResponseDTO> obtenerPlanesActivos(String auth0Id){
+    public List<SocioPlanResponseDTO> obtenerPlanesActivosYPendientes(String auth0Id){
         Socio socio = socioRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
-        return socioPlanRepository.planesActivosBySocioId(socio.getId())
+        return socioPlanRepository.planesActivosyPendientesBySocioId(socio.getId())
                 .stream()
                 .map(socioPlanMapper::toResponse)
                 .toList();

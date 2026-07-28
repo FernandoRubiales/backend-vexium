@@ -126,12 +126,16 @@ public class PagoService {
             PaymentClient paymentClient = new PaymentClient();
             Payment payment = paymentClient.get(Long.parseLong(mpPaymentId));
 
+            System.out.println("Estado del pago en MP: " + payment.getStatus());
+            System.out.println("External Reference recibido: " + payment.getExternalReference());
             //Se procesa pagos aprobados
             if (!"approved".equals(payment.getStatus())) {
+                System.out.println("El pago no está aprobado, su estado es: " + payment.getStatus());
                 return;
             }
             // Recuperamos el socioPlanId del externalReference
             Long socioPlanId = Long.parseLong(payment.getExternalReference());
+            System.out.println("Buscando SocioPlan ID: " + socioPlanId);
             SocioPlan socioPlan = socioPlanRepository.findById(socioPlanId)
                     .orElseThrow(() -> new ResourceNotFoundException("SocioPlan no encontrado"));
 
