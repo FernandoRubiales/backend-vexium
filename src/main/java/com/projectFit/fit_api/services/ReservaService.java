@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -42,13 +43,19 @@ public class ReservaService {
         Clase clase = claseRepository.findById(reservaRequestDTO.getClaseId())
                 .orElseThrow(() -> new ResourceNotFoundException("Clase no encontrada"));
 
-        String diaActual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es"));
-        String diaFormateado = diaActual.substring(0, 1).toUpperCase() + diaActual.substring(1);
+        // Validar que la clase no sea de un día pasado o con horario pasado
+        int diaActualNumero = LocalDate.now().getDayOfWeek().getValue();
+        int diaClaseNumero = numeroDiaSemana(clase.getDiaSemana());
 
-        if (clase.getDiaSemana().equalsIgnoreCase(diaFormateado)) {
-            if (LocalTime.now().isAfter(clase.getHoraInicio())) {
-                throw new BusinessException("No podés reservar una clase cuyo horario ya pasó");
-            }
+        if (diaClaseNumero < diaActualNumero) {
+            throw new BusinessException(
+                    "No podés reservar una clase que ya pasó");
+        }
+
+        if (diaClaseNumero == diaActualNumero &&
+                LocalTime.now().isAfter(clase.getHoraInicio())) {
+            throw new BusinessException(
+                    "No podés reservar una clase cuyo horario ya pasó");
         }
         SocioPlan socioPlan = socioPlanRepository.planActivoporSocioyActividadId(socio.getId(), clase.getTipoActividad().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No tenés un plan activo para esta actividad"));
@@ -92,6 +99,23 @@ public class ReservaService {
         socioPlanRepository.save(socioPlan);
 
         return reservaMapper.toResponse(reservaRepository.save(reserva));
+    }
+    //Conversion
+    private int numeroDiaSemana(String diaSemanaEspanol) {
+        Map<String, Integer> dias = Map.of(
+                "Lunes", 1,
+                "Martes", 2,
+                "Miercoles", 3,
+                "Jueves", 4,
+                "Viernes", 5,
+                "Sábado", 6,
+                "Domingo", 7
+        );
+        Integer numero = dias.get(diaSemanaEspanol);
+        if (numero == null) {
+            throw new BusinessException("Día de semana inválido: " + diaSemanaEspanol);
+        }
+        return numero;
     }
 
     //CANCELAR UNA RESERVA

@@ -44,5 +44,18 @@ public interface ClaseRepository extends JpaRepository <Clase,Long> {
     List<Clase> clasesDisponiblesParaSocio(@Param("socioId") Long socioId,
                                            @Param("diaActual") String diaActual);
 
+
+    @Query(value = "SELECT * FROM clase c WHERE c.fecha_hora_baja_clase IS NULL " +
+            "ORDER BY CASE c.dia_semana " +
+            "WHEN 'Lunes' THEN 1 " +
+            "WHEN 'Martes' THEN 2 " +
+            "WHEN 'Miercoles' THEN 3 " +
+            "WHEN 'Miércoles' THEN 3 " +
+            "WHEN 'Jueves' THEN 4 " +
+            "WHEN 'Viernes' THEN 5 " +
+            "WHEN 'Sabado' THEN 6 " +
+            "WHEN 'Sábado' THEN 6 " +
+            "WHEN 'Domingo' THEN 7 " +
+            "ELSE 8 END, c.hora_inicio ASC", nativeQuery = true)
     List<Clase> findByFechaHoraBajaClaseIsNull();
 }

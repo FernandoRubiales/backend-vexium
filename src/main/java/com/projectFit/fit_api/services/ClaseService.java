@@ -112,7 +112,7 @@ public class ClaseService {
     public List<ClaseResponseDTO> obtenerTodas(){
         return claseRepository.findByFechaHoraBajaClaseIsNull()
                 .stream()
-                .map(claseMapper::toResponse)
+                .map(this::calcularCuposDisponibles)
                 .toList();
     }
 }
