@@ -13,12 +13,14 @@ import com.mercadopago.resources.preference.Preference;
 import com.projectFit.fit_api.dto.PagoRequestDTO;
 import com.projectFit.fit_api.dto.PagoResponseDTO;
 import com.projectFit.fit_api.entity.Pago;
+import com.projectFit.fit_api.entity.Socio;
 import com.projectFit.fit_api.entity.SocioPlan;
 import com.projectFit.fit_api.exception.BusinessException;
 import com.projectFit.fit_api.exception.ResourceNotFoundException;
 import com.projectFit.fit_api.mappers.PagoMapper;
 import com.projectFit.fit_api.repository.PagoRepository;
 import com.projectFit.fit_api.repository.SocioPlanRepository;
+import com.projectFit.fit_api.repository.SocioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class PagoService {
     private final SocioPlanRepository socioPlanRepository;
     private final SocioPlanService socioPlanService;
     private final PagoMapper pagoMapper;
+    private final SocioRepository socioRepository;
+
 
     private final String mpAccessToken = "APP_USR-1756198843857397-071316-5dd3feb3465105c2fe46030449156be4-3538197051";
 
@@ -153,5 +157,15 @@ public class PagoService {
                     "Error al procesar webhook: " + e.getMessage());
         }
 
+    }
+    //GET DE TODOS LOS PAGOS DEL SOCIO PARA HISTORIAL
+    public List<PagoResponseDTO> obtenerHistorialPagos(String auth0Id) {
+        Socio socio = socioRepository.findByAuth0Id(auth0Id)
+                .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
+
+        return pagoRepository.findHistorialPagosBySocioId(socio.getId())
+                .stream()
+                .map(pagoMapper::toResponse)
+                .toList();
     }
 }

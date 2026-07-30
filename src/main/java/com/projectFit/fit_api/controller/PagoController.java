@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -75,5 +76,12 @@ public class PagoController {
             e.printStackTrace();
         }
         return ResponseEntity.ok().build();
+    }
+
+    //GET DE TODOS LOS PAGOS DEL SOCIO PARA HISTORIAL
+    @GetMapping("/mis-pagos")
+    @PreAuthorize("hasRole('SOCIO')")
+    public ResponseEntity<List<PagoResponseDTO>> obtenerHistorial(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(pagoService.obtenerHistorialPagos(jwt.getSubject()));
     }
 }
