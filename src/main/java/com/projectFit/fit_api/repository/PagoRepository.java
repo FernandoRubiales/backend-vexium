@@ -1,6 +1,8 @@
 package com.projectFit.fit_api.repository;
 
 import com.projectFit.fit_api.entity.Pago;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,14 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
             "ORDER BY p.fecha_hora_pago DESC",
             nativeQuery = true)
     List<Pago> findHistorialPagosBySocioId(@Param("socioId") Long socioId);
+
+    //Query para traer todos los pagos por fecha descendente
+    @Query(value = "SELECT p.* FROM pago p " +
+            "JOIN socio_plan sp ON p.socio_plan_id = sp.id " +
+            "JOIN socio s ON sp.socio_id = s.id " +
+            "ORDER BY p.fecha_hora_pago DESC",
+            countQuery = "SELECT COUNT(*) FROM pago",
+            nativeQuery = true)
+    Page<Pago> findAllPagos(Pageable pageable);
 }
+

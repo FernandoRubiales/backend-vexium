@@ -6,6 +6,7 @@ import com.projectFit.fit_api.entity.Pago;
 import com.projectFit.fit_api.services.PagoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -83,5 +84,15 @@ public class PagoController {
     @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<List<PagoResponseDTO>> obtenerHistorial(@AuthenticationPrincipal Jwt jwt) {
         return ResponseEntity.ok(pagoService.obtenerHistorialPagos(jwt.getSubject()));
+    }
+
+    //GET DE TODOS LOS PAGOS
+    @GetMapping("/todos")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    public ResponseEntity<Page<PagoResponseDTO>> obtenerTodosLosPagos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(pagoService.obtenerTodosLosPagos(page,size));
     }
 }

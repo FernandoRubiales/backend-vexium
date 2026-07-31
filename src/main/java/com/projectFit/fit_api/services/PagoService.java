@@ -22,6 +22,9 @@ import com.projectFit.fit_api.repository.PagoRepository;
 import com.projectFit.fit_api.repository.SocioPlanRepository;
 import com.projectFit.fit_api.repository.SocioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -167,5 +170,13 @@ public class PagoService {
                 .stream()
                 .map(pagoMapper::toResponse)
                 .toList();
+    }
+
+    // GET DE TODOS LOS PAGOS
+    @Transactional(readOnly = true)
+    public Page<PagoResponseDTO> obtenerTodosLosPagos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return pagoRepository.findAllPagos(pageable)
+                .map(pagoMapper::toResponse);
     }
 }
