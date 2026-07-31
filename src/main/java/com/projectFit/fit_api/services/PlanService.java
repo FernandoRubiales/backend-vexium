@@ -34,6 +34,7 @@ public class PlanService {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra ese tipo de actividad"));
 
         Plan plan = planMapper.toEntity(planRequestDTO);
+        plan.setTipoActividad(tipoActividad);
         plan.setClasesIncluidas(planRequestDTO.getDiasPorSemana() * 4 ); //tomamos 4 semanas del mes
         Plan planGuardado = planRepository.save(plan);
 
