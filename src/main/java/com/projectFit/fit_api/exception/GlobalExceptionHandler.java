@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiException> handleBusinessException(
             BusinessException ex) {
         ApiException error = new ApiException(
-                HttpStatus.BAD_REQUEST.value(),    // 400
+                HttpStatus.BAD_REQUEST.value(),
                 "Error de negocio",
                 ex.getMessage(),
                 LocalDateTime.now()

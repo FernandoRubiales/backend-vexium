@@ -40,7 +40,6 @@ public interface SocioPlanRepository extends JpaRepository<SocioPlan, Long> {
     List<SocioPlan> planesPendientesPorSocioId(@Param("socioId") Long socioId);
 
     // Query para verificar si el socio tiene un plan activo para ese tipo de actividad
-    // (Corregido: sp.plan.id -> sp.plan_id  y  p.tipo_actividad.id -> p.tipo_actividad_id)
     @Query(value = "SELECT sp.* FROM socio_plan sp " +
             "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
             "JOIN plan p ON sp.plan_id = p.id " +
