@@ -36,11 +36,7 @@ public class Socio {
     @Email(message = "Email inválido")
     @Column(nullable = false)
     private String email;
-
-
     private String telefono;
-
-    //@Column(nullable = false)
     private LocalDate fechaNacimiento;
 
     //RELACIONES

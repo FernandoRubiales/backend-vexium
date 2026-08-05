@@ -41,11 +41,12 @@ public class PagoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pagoService.realizarPagoEfectivo(pagoRequestDTO));
     }
 
+    //WEBHOOK DE MP una vez q se aprueba el pago
     @PostMapping("/webhook/mercadopago")
     public ResponseEntity<Void> webhookMercadoPago(
             @RequestBody Map<String, Object> payload){
 
-        System.out.println("====== WEBHOOK RECIBIDO ======");
+        System.out.println("WEBHOOK RECIBIDO");
         System.out.println("Payload completo: " + payload);
 
         try {
@@ -72,7 +73,7 @@ public class PagoController {
                 System.out.println("Notificación recibida pero sin ID de pago directo.");
             }
         } catch (Exception e) {
-            // Esto evita el 502 Bad Gateway y te imprime el error real en tu consola de Spring Boot
+
             System.err.println("ERROR CRÍTICO EN WEBHOOK: " + e.getMessage());
             e.printStackTrace();
         }

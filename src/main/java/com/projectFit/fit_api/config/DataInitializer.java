@@ -26,8 +26,7 @@ public class DataInitializer implements ApplicationRunner {
         if (estadoSocioPlanRepository.count() == 0) {
             estadoSocioPlanRepository.save(new EstadoSocioPlan(null,"Pendiente"));
             estadoSocioPlanRepository.save(new EstadoSocioPlan(null,"Activo"));
-            estadoSocioPlanRepository.save(new EstadoSocioPlan(null, "Vencido"));
-            estadoSocioPlanRepository.save(new EstadoSocioPlan(null, "Suspendido"));
+
             System.out.println("Estados de SocioPlan inicializados");
         }
     }
