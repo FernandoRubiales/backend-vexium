@@ -15,5 +15,6 @@ public interface SocioPlanMapper {
     @Mapping(source = "plan.tipoActividad.nombreTipoActividad", target = "tipoActividad")
     @Mapping(source = "plan.clasesIncluidas", target = "clasesIncluidas")
     @Mapping(source = "estadoSocioPlan.nombreEstadoSocioPlan", target = "estadoSocioPlan")
+    @Mapping(source = "plan.precio", target = "precio")
     SocioPlanResponseDTO toResponse(SocioPlan socioPlan);
 }

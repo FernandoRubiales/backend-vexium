@@ -3,6 +3,7 @@ package com.projectFit.fit_api.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Setter
@@ -19,4 +20,5 @@ public class SocioPlanResponseDTO {
     private LocalDateTime fechaInicioSocioPlan;
     private LocalDateTime fechaVencimientoSocioPlan;
     private String estadoSocioPlan;
+    private BigDecimal precio;
 }
