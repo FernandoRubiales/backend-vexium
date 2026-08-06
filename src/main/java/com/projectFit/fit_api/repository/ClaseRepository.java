@@ -58,4 +58,7 @@ public interface ClaseRepository extends JpaRepository <Clase,Long> {
             "WHEN 'Domingo' THEN 7 " +
             "ELSE 8 END, c.hora_inicio ASC", nativeQuery = true)
     List<Clase> findByFechaHoraBajaClaseIsNull();
+
+    //Query para buscar las clases del dia elegido
+    List<Clase> findByDiaSemana(String diaSemana);
 }

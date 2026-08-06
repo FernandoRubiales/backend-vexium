@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -95,5 +96,12 @@ public class PagoController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok(pagoService.obtenerTodosLosPagos(page,size));
+    }
+
+    //INGRESOS DEL DIA DE HOY PARA DASHBOARD
+    @GetMapping("/ingresos-hoy")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    public ResponseEntity<BigDecimal> obtenerIngresosHoy() {
+        return ResponseEntity.ok(pagoService.obtenerIngresosDeHoy());
     }
 }

@@ -87,6 +87,7 @@ public class SocioService {
         socioExistente.setTelefono(socioRequestDTO.getTelefono());
         socioExistente.setFechaNacimiento(socioRequestDTO.getFechaNacimiento());
         socioExistente.setEmail(socioRequestDTO.getEmail());
+        socioExistente.setDni(socioRequestDTO.getDni());
         Socio socioGuardado = socioRepository.save(socioExistente);
         return socioMapper.toResponse(socioGuardado);
     }

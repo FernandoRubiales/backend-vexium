@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,5 +176,10 @@ public class PagoService {
         Pageable pageable = PageRequest.of(page, size);
         return pagoRepository.findAllPagos(pageable)
                 .map(pagoMapper::toResponse);
+    }
+
+    //INGRESOS DEL DIA DE HOY PARA DASHBOARD
+    public BigDecimal obtenerIngresosDeHoy() {
+        return pagoRepository.obtenerTotalIngresosDelDia();
     }
 }

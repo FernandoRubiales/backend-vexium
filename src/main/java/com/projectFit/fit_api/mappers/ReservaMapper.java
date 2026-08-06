@@ -13,5 +13,7 @@ public interface ReservaMapper {
     @Mapping(source = "clase.diaSemana", target = "diaSemana")
     @Mapping(source = "clase.horaInicio", target = "horaInicio")
     @Mapping(source = "clase.horaFin", target = "horaFin")
+    @Mapping(source = "socioPlan.socio.nombre", target = "nombreSocio")
+    @Mapping(source = "socioPlan.socio.apellido", target = "apellidoSocio")
     ReservaResponseDTO toResponse(Reserva reserva);
 }

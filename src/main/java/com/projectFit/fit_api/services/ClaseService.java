@@ -115,4 +115,12 @@ public class ClaseService {
                 .map(this::calcularCuposDisponibles)
                 .toList();
     }
+
+    //GET CLASES POR DIA PARA DASHBOARD
+    public List<ClaseResponseDTO> obtenerClasesPorDia(String diaSemana) {
+        return claseRepository.findByDiaSemana(diaSemana)
+                .stream()
+                .map(claseMapper::toResponse)
+                .toList();
+    }
 }

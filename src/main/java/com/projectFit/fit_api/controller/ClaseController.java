@@ -73,4 +73,10 @@ public class ClaseController {
         return ResponseEntity.ok(claseService.obtenerClasesDisponiblesParaSocio(jwt.getSubject()));
 
     }
+    //GET CLASES POR DIA PARA DASHBOARD
+    @GetMapping("/dia/{diaSemana}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    public ResponseEntity<List<ClaseResponseDTO>> obtenerClasesDelDia(@PathVariable String diaSemana) {
+        return ResponseEntity.ok(claseService.obtenerClasesPorDia(diaSemana));
+    }
 }

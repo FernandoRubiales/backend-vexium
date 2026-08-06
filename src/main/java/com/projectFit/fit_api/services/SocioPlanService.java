@@ -96,4 +96,12 @@ public class SocioPlanService {
                 .map(socioPlanMapper::toResponse)
                 .toList();
     }
+
+    //PROXIMOS VENCIMIENTOS DE PLAN
+    public List<SocioPlanResponseDTO> obtenerVencimientosProximos() {
+        return socioPlanRepository.buscarVencimientosProximos()
+                .stream()
+                .map(socioPlanMapper::toResponse)
+                .toList();
+    }
 }

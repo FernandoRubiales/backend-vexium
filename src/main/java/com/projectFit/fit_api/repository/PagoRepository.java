@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,5 +35,9 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
             countQuery = "SELECT COUNT(*) FROM pago",
             nativeQuery = true)
     Page<Pago> findAllPagos(Pageable pageable);
+
+    //Query para buscar los ingresos del dia actual
+    @Query(value = "SELECT COALESCE(SUM(monto_pago), 0) FROM pago WHERE DATE(fecha_hora_pago) = CURRENT_DATE", nativeQuery = true)
+    BigDecimal obtenerTotalIngresosDelDia();
 }
 

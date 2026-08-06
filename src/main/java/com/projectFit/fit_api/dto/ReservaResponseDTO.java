@@ -18,4 +18,6 @@ public class ReservaResponseDTO {
     private LocalDate fechaClaseReservada;
     private LocalTime horaInicio;
     private LocalTime horaFin;
+    private String nombreSocio;
+    private String apellidoSocio;
 }
