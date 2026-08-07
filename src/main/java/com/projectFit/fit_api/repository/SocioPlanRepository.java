@@ -66,9 +66,16 @@ public interface SocioPlanRepository extends JpaRepository<SocioPlan, Long> {
 
     // Query para buscar planes activos que vencen en 3 días o menos, o que tengan 1 o 0 clases
     @Query(value = "SELECT sp.* FROM socio_plan sp " +
-            "INNER JOIN estado_socio_plan esp ON sp.estado_socio_plan_id = esp.id " +
+            "INNER JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
             "WHERE esp.nombre_estado_socio_plan = 'Activo' " +
             "AND (sp.fecha_vencimiento_socio_plan <= CURRENT_DATE + INTERVAL '3 days' " +
             "OR sp.clases_disponibles <= 1)", nativeQuery = true)
     List<SocioPlan> buscarVencimientosProximos();
+
+    //Query para contar cantidad de socios activos
+    @Query(value = "SELECT COUNT(DISTINCT sp.socio_id) FROM socio_plan sp " +
+            "INNER JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
+            "WHERE esp.nombre_estado_socio_plan = 'Activo'",
+            nativeQuery = true)
+    Integer contarSociosActivos();
 }

@@ -61,4 +61,16 @@ public interface ClaseRepository extends JpaRepository <Clase,Long> {
 
     //Query para buscar las clases del dia elegido
     List<Clase> findByDiaSemana(String diaSemana);
+
+    //Query para obtener el ranking de clases
+    @Query(value = "SELECT ta.nombre_tipo_actividad, COUNT(r.id) as total_reservas " +
+            "FROM clase c " +
+            "INNER JOIN tipo_actividad ta ON c.tipo_actividad_id = ta.id " +
+            "INNER JOIN reserva r ON c.id = r.clase_id " +
+            "GROUP BY ta.nombre_tipo_actividad " +
+            "ORDER BY total_reservas DESC LIMIT 5",
+            nativeQuery = true)
+    List<Object[]> obtenerRankingClases();
+
+
 }

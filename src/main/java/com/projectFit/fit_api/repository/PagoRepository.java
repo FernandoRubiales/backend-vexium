@@ -39,5 +39,20 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
     //Query para buscar los ingresos del dia actual
     @Query(value = "SELECT COALESCE(SUM(monto_pago), 0) FROM pago WHERE DATE(fecha_hora_pago) = CURRENT_DATE", nativeQuery = true)
     BigDecimal obtenerTotalIngresosDelDia();
+
+    //Query para obtener los ingresos del mes
+    @Query(value = "SELECT COALESCE(SUM(monto_pago), 0) FROM pago " +
+            "WHERE EXTRACT(MONTH FROM fecha_hora_pago) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND EXTRACT(YEAR FROM fecha_hora_pago) = EXTRACT(YEAR FROM CURRENT_DATE)",
+            nativeQuery = true)
+    BigDecimal obtenerIngresosDelMes();
+
+    //Query para obtener distribucion de ingresos del mes
+    @Query(value = "SELECT metodo_abonado, COALESCE(SUM(monto_pago), 0) FROM pago " +
+            "WHERE EXTRACT(MONTH FROM fecha_hora_pago) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND EXTRACT(YEAR FROM fecha_hora_pago) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "GROUP BY metodo_abonado",
+            nativeQuery = true)
+    List<Object[]> obtenerDistribucionIngresosMes();
 }
 

@@ -57,7 +57,7 @@ public class SocioPlanController {
     }
 
     //PROXIMOS VENCIMIENTO DE PLAN
-    @GetMapping("/vencimientos-proximos")
+    @GetMapping("/vencimientos_proximos")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<List<SocioPlanResponseDTO>> obtenerVencimientos() {
         return ResponseEntity.ok(socioPlanService.obtenerVencimientosProximos());
