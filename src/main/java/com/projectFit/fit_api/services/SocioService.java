@@ -67,6 +67,23 @@ public class SocioService {
                     return socioRepository.save(nuevo);
                 });
     }
+
+    // UPDATE MI PERFIL (Exclusivo para el socio logueado)
+    public SocioResponseDTO actualizarMiPerfil(Jwt jwt, SocioRequestDTO socioRequestDTO) {
+        String auth0Id = jwt.getSubject();
+
+        Socio socioExistente = socioRepository.findByAuth0Id(auth0Id)
+                .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
+        socioExistente.setNombre(socioRequestDTO.getNombre());
+        socioExistente.setApellido(socioRequestDTO.getApellido());
+        socioExistente.setTelefono(socioRequestDTO.getTelefono());
+        socioExistente.setFechaNacimiento(socioRequestDTO.getFechaNacimiento());
+        socioExistente.setDni(socioRequestDTO.getDni());
+
+        Socio socioGuardado = socioRepository.save(socioExistente);
+        return socioMapper.toResponse(socioGuardado);
+    }
+
     //CHANGE ROL
     public void cambiarRol(Long id, String nuevoRol){
         Socio socioExistente = socioRepository.findById(id)

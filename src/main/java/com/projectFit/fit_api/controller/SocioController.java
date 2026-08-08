@@ -42,6 +42,15 @@ public class SocioController {
         return ResponseEntity.ok(socioMapper.toResponse(socio));
     }
 
+    // UPDATE MI PERFIL
+    @PutMapping("/perfil")
+    @PreAuthorize("hasRole('SOCIO')")
+    public ResponseEntity<SocioResponseDTO> actualizarMiPerfil(
+            @Valid @RequestBody SocioRequestDTO socioRequestDTO,
+            @AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(socioService.actualizarMiPerfil(jwt, socioRequestDTO));
+    }
+
     //Solo admin puede cambiar roles
     @PatchMapping("/{id}/cambiar-rol")
     @PreAuthorize("hasRole('ADMIN')")
