@@ -2,6 +2,7 @@ package com.projectFit.fit_api.controller;
 
 import com.projectFit.fit_api.dto.SocioRequestDTO;
 import com.projectFit.fit_api.dto.SocioResponseDTO;
+import com.projectFit.fit_api.dto.SocioUpdateDTO;
 import com.projectFit.fit_api.entity.Socio;
 import com.projectFit.fit_api.mappers.SocioMapper;
 import com.projectFit.fit_api.services.SocioService;
@@ -46,9 +47,9 @@ public class SocioController {
     @PutMapping("/perfil")
     @PreAuthorize("hasRole('SOCIO')")
     public ResponseEntity<SocioResponseDTO> actualizarMiPerfil(
-            @Valid @RequestBody SocioRequestDTO socioRequestDTO,
+            @Valid @RequestBody SocioUpdateDTO socioUpdateDTO,
             @AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(socioService.actualizarMiPerfil(jwt, socioRequestDTO));
+        return ResponseEntity.ok(socioService.actualizarMiPerfil(jwt, socioUpdateDTO));
     }
 
     //Solo admin puede cambiar roles
@@ -66,8 +67,8 @@ public class SocioController {
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     public ResponseEntity<SocioResponseDTO> actualizarSocio(
             @PathVariable Long id,
-            @Valid @RequestBody SocioRequestDTO socioRequestDTO) {
-        return ResponseEntity.ok(socioService.actualizarSocio(id, socioRequestDTO));
+            @Valid @RequestBody SocioUpdateDTO socioUpdateDTO) {
+        return ResponseEntity.ok(socioService.actualizarSocio(id, socioUpdateDTO));
     }
 
     //DELETE SOCIO

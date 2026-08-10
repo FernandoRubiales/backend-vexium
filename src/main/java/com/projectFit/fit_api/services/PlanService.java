@@ -38,7 +38,8 @@ public class PlanService {
 
         Plan plan = planMapper.toEntity(planRequestDTO);
         plan.setTiposActividades(actividades);
-        plan.setClasesIncluidas(planRequestDTO.getDiasPorSemana() * 4 ); //tomamos 4 semanas del mes
+        int clasesPrecisas = (int) Math.ceil((planRequestDTO.getDiasPorSemana() * 30.0) / 7.0);
+        plan.setClasesIncluidas(clasesPrecisas);
         Plan planGuardado = planRepository.save(plan);
 
         return planMapper.toResponse(planGuardado);
@@ -59,7 +60,8 @@ public class PlanService {
         planExistente.setDescripcion(planRequestDTO.getDescripcion());
         planExistente.setDiasPorSemana(planRequestDTO.getDiasPorSemana());
         planExistente.setPrecio(planRequestDTO.getPrecio());
-        planExistente.setClasesIncluidas(planRequestDTO.getDiasPorSemana()* 4);
+        int clasesPrecisas = (int) Math.ceil((planRequestDTO.getDiasPorSemana() * 30.0) / 7.0);
+        planExistente.setClasesIncluidas(clasesPrecisas);
         planExistente.setTiposActividades(actividades);
 
         Plan planGuardado = planRepository.save(planExistente);

@@ -6,6 +6,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.projectFit.fit_api.dto.SocioRequestDTO;
 import com.projectFit.fit_api.dto.SocioResponseDTO;
+import com.projectFit.fit_api.dto.SocioUpdateDTO;
 import com.projectFit.fit_api.entity.Rol;
 import com.projectFit.fit_api.entity.Socio;
 import com.projectFit.fit_api.exception.BusinessException;
@@ -69,16 +70,16 @@ public class SocioService {
     }
 
     // UPDATE MI PERFIL (Exclusivo para el socio logueado)
-    public SocioResponseDTO actualizarMiPerfil(Jwt jwt, SocioRequestDTO socioRequestDTO) {
+    public SocioResponseDTO actualizarMiPerfil(Jwt jwt, SocioUpdateDTO socioUpdateDTO) {
         String auth0Id = jwt.getSubject();
 
         Socio socioExistente = socioRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
-        socioExistente.setNombre(socioRequestDTO.getNombre());
-        socioExistente.setApellido(socioRequestDTO.getApellido());
-        socioExistente.setTelefono(socioRequestDTO.getTelefono());
-        socioExistente.setFechaNacimiento(socioRequestDTO.getFechaNacimiento());
-        socioExistente.setDni(socioRequestDTO.getDni());
+        socioExistente.setNombre(socioUpdateDTO.getNombre());
+        socioExistente.setApellido(socioUpdateDTO.getApellido());
+        socioExistente.setTelefono(socioUpdateDTO.getTelefono());
+        socioExistente.setFechaNacimiento(socioUpdateDTO.getFechaNacimiento());
+        socioExistente.setDni(socioUpdateDTO.getDni());
 
         Socio socioGuardado = socioRepository.save(socioExistente);
         return socioMapper.toResponse(socioGuardado);
@@ -96,15 +97,14 @@ public class SocioService {
     }
 
     //UPDATE SOCIO
-    public SocioResponseDTO actualizarSocio(Long id, SocioRequestDTO socioRequestDTO){
+    public SocioResponseDTO actualizarSocio(Long id, SocioUpdateDTO socioUpdateDTO){
         Socio socioExistente = socioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado"));
-        socioExistente.setNombre(socioRequestDTO.getNombre());
-        socioExistente.setApellido(socioRequestDTO.getApellido());
-        socioExistente.setTelefono(socioRequestDTO.getTelefono());
-        socioExistente.setFechaNacimiento(socioRequestDTO.getFechaNacimiento());
-        socioExistente.setEmail(socioRequestDTO.getEmail());
-        socioExistente.setDni(socioRequestDTO.getDni());
+        socioExistente.setNombre(socioUpdateDTO.getNombre());
+        socioExistente.setApellido(socioUpdateDTO.getApellido());
+        socioExistente.setTelefono(socioUpdateDTO.getTelefono());
+        socioExistente.setFechaNacimiento(socioUpdateDTO.getFechaNacimiento());
+        socioExistente.setDni(socioUpdateDTO.getDni());
         Socio socioGuardado = socioRepository.save(socioExistente);
         return socioMapper.toResponse(socioGuardado);
     }
