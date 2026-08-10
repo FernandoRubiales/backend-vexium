@@ -10,5 +10,4 @@ public class TipoActividadResponseDTO {
     private Long id;
     private String nombreTipoActividad;
     private String descripcion;
-    private Boolean requiereReserva;
 }

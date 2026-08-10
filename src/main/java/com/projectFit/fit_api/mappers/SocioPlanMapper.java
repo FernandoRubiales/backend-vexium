@@ -12,7 +12,7 @@ public interface SocioPlanMapper {
     @Mapping(source = "socio.nombre", target = "nombreSocio")
     @Mapping(source = "socio.apellido", target = "apellidoSocio")
     @Mapping(source = "plan.nombrePlan", target = "nombrePlan")
-    @Mapping(source = "plan.tipoActividad.nombreTipoActividad", target = "tipoActividad")
+    @Mapping(target = "tiposActividades", expression = "java(socioPlan.getPlan().getTiposActividades().stream().map(a -> a.getNombreTipoActividad()).toList())")
     @Mapping(source = "plan.clasesIncluidas", target = "clasesIncluidas")
     @Mapping(source = "estadoSocioPlan.nombreEstadoSocioPlan", target = "estadoSocioPlan")
     @Mapping(source = "plan.precio", target = "precio")

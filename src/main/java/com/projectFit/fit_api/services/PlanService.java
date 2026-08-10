@@ -30,11 +30,14 @@ public class PlanService {
         if(planRepository.existsByNombrePlan(planRequestDTO.getNombrePlan())){
             throw new BusinessException("Ya existe un plan con ese nombre");
         }
-        TipoActividad tipoActividad = tipoActividadRepository.findById(planRequestDTO.getTipoActividadId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra ese tipo de actividad"));
+        // Buscamos todas las actividades por los IDs recibidos
+        List<TipoActividad> actividades = tipoActividadRepository.findAllById(planRequestDTO.getTiposActividadesIds());
+        if (actividades.isEmpty()) {
+            throw new BusinessException("Debe seleccionar al menos una actividad válida");
+        }
 
         Plan plan = planMapper.toEntity(planRequestDTO);
-        plan.setTipoActividad(tipoActividad);
+        plan.setTiposActividades(actividades);
         plan.setClasesIncluidas(planRequestDTO.getDiasPorSemana() * 4 ); //tomamos 4 semanas del mes
         Plan planGuardado = planRepository.save(plan);
 
@@ -47,15 +50,17 @@ public class PlanService {
         Plan planExistente = planRepository.findByIdAndFechaHoraBajaPlanIsNull(id).
                 orElseThrow(() -> new ResourceNotFoundException("Plan no encontrado"));
 
-        TipoActividad tipoActividad = tipoActividadRepository.findByIdAndFechaHoraBajaActividadIsNull(planRequestDTO.getTipoActividadId()).
-                orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
+        List<TipoActividad> actividades = tipoActividadRepository.findAllById(planRequestDTO.getTiposActividadesIds());
+        if (actividades.isEmpty()) {
+            throw new BusinessException("Debe seleccionar al menos una actividad válida");
+        }
 
         planExistente.setNombrePlan(planRequestDTO.getNombrePlan());
         planExistente.setDescripcion(planRequestDTO.getDescripcion());
         planExistente.setDiasPorSemana(planRequestDTO.getDiasPorSemana());
         planExistente.setPrecio(planRequestDTO.getPrecio());
         planExistente.setClasesIncluidas(planRequestDTO.getDiasPorSemana()* 4);
-        planExistente.setTipoActividad(tipoActividad);
+        planExistente.setTiposActividades(actividades);
 
         Plan planGuardado = planRepository.save(planExistente);
 

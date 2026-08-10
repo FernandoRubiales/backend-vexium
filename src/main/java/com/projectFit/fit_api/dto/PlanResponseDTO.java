@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,5 +16,5 @@ public class PlanResponseDTO {
     private BigDecimal precio;
     private int diasPorSemana;
     private int clasesIncluidas;
-    private String tipoActividad;
+    private List<String> tiposActividades;
 }

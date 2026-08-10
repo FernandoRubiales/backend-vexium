@@ -43,9 +43,13 @@ public class Plan {
     private int clasesIncluidas;
 
     //RELACIONES
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "tipo_actividad_id")
-    private TipoActividad tipoActividad;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "plan_actividad",
+            joinColumns = @JoinColumn(name = "plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "tipo_actividad_id")
+    )
+    private List<TipoActividad> tiposActividades;
 
 
 }

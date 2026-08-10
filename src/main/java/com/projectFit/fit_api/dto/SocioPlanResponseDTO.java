@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -14,7 +15,7 @@ public class SocioPlanResponseDTO {
     private String nombreSocio;
     private String apellidoSocio;
     private String nombrePlan;
-    private String tipoActividad;
+    private List<String> tiposActividades;
     private int clasesDisponibles;
     private int clasesIncluidas;
     private LocalDateTime fechaInicioSocioPlan;

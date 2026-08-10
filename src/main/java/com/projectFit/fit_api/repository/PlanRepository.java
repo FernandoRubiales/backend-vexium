@@ -16,8 +16,10 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     Optional<Plan> findByIdAndFechaHoraBajaPlanIsNull(Long id);
     boolean existsByNombrePlan(String nombrePlan);
 
-    @Query(value = "SELECT * FROM plan WHERE tipo_actividad_id = :tipoActividadId and fecha_hora_baja_plan IS NULL"
-    , nativeQuery = true)
+    @Query(value = "SELECT p.* FROM plan p " +
+            "JOIN plan_actividad pa ON p.id = pa.plan_id " +
+            "WHERE pa.tipo_actividad_id = :tipoActividadId AND p.fecha_hora_baja_plan IS NULL",
+            nativeQuery = true)
     List<Plan> planesActivosPorActividad(@Param("tipoActividadId") Long tipoActividadId);
 
 }

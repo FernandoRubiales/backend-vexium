@@ -1,11 +1,13 @@
 package com.projectFit.fit_api.dto;
 
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +25,7 @@ public class PlanRequestDTO {
     @NotNull(message = "dias obligatorio")
     private int diasPorSemana;
 
-    @NotNull(message = "tipo de actividad obligatoria")
-    private Long tipoActividadId;
+    @NotEmpty(message = "Debe seleccionar al menos un tipo de actividad")
+    private List<Long> tiposActividadesIds;
 
 }

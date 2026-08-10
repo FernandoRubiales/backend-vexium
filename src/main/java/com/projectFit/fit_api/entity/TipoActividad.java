@@ -29,9 +29,5 @@ public class TipoActividad {
     @Column(nullable = false)
     private String nombreTipoActividad;
 
-    @NotNull(message = "Requiere reserva obligatorio")
-    @Column(nullable = false)
-    private Boolean requiereReserva;
-
     private LocalDateTime fechaHoraBajaActividad;
 }

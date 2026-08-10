@@ -39,30 +39,19 @@ public interface SocioPlanRepository extends JpaRepository<SocioPlan, Long> {
             nativeQuery = true)
     List<SocioPlan> planesPendientesPorSocioId(@Param("socioId") Long socioId);
 
-    // Query para verificar si el socio tiene un plan activo para ese tipo de actividad
+    // Query para verificar si el socio tiene un plan activo para esos tipos de actividades
     @Query(value = "SELECT sp.* FROM socio_plan sp " +
             "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
             "JOIN plan p ON sp.plan_id = p.id " +
+            "JOIN plan_actividad pa ON p.id = pa.plan_id " +
             "WHERE sp.socio_id = :socioId " +
-            "AND p.tipo_actividad_id = :tipoActividadId " +
+            "AND pa.tipo_actividad_id = :tipoActividadId " +
             "AND esp.nombre_estado_socio_plan = 'Activo'",
             nativeQuery = true)
     Optional<SocioPlan> planActivoporSocioyActividadId(
             @Param("socioId") Long socioId,
             @Param("tipoActividadId") Long tipoActividadId);
 
-    // Query para buscar plan activo del socio que no requiera reserva de clase
-    @Query(value = "SELECT sp.* FROM socio_plan sp " +
-            "JOIN estado_socio_plan esp ON sp.estado_id = esp.id " +
-            "JOIN plan p ON sp.plan_id = p.id " +
-            "JOIN tipo_actividad ta ON p.tipo_actividad_id = ta.id " +
-            "WHERE sp.socio_id = :socioId " +
-            "AND esp.nombre_estado_socio_plan = 'Activo' " +
-            "AND ta.requiere_reserva = false " +
-            "AND sp.clases_disponibles > 0 " +
-            "LIMIT 1",
-            nativeQuery = true)
-    Optional<SocioPlan> planActivoporSocio(@Param("socioId") Long socioId);
 
     // Query para buscar planes activos que vencen en 3 días o menos, o que tengan 1 o 0 clases
     @Query(value = "SELECT sp.* FROM socio_plan sp " +

@@ -40,7 +40,6 @@ public class TipoActividadService {
 
         tipoActividadExistente.setNombreTipoActividad(tipoActividadRequestDTO.getNombreTipoActividad());
         tipoActividadExistente.setDescripcion(tipoActividadRequestDTO.getDescripcion());
-        tipoActividadExistente.setRequiereReserva(tipoActividadRequestDTO.getRequiereReserva());
 
         TipoActividad tipoActividadGuardado = tipoActividadRepository.save(tipoActividadExistente);
         return tipoActividadMapper.toResponse(tipoActividadGuardado);

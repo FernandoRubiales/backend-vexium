@@ -15,6 +15,4 @@ public class TipoActividadRequestDTO {
     @NotBlank(message = "Descripción obligatoria")
     private String descripcion;
 
-    @NotNull(message = "Requiere reserva obligatorio")
-    private Boolean requiereReserva;
 }

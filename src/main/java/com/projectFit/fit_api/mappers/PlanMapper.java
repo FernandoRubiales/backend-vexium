@@ -13,10 +13,11 @@ public interface PlanMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaHoraBajaPlan", ignore = true)
     @Mapping(target = "clasesIncluidas", ignore = true)
+    @Mapping(target = "tiposActividades", ignore = true)
     Plan toEntity(PlanRequestDTO planRequestDTO);
 
     //Entidad Plan a PlanResponseDTO
-    @Mapping(source = "tipoActividad.nombreTipoActividad", target = "tipoActividad")
+    @Mapping(target = "tiposActividades", expression = "java(plan.getTiposActividades().stream().map(a -> a.getNombreTipoActividad()).toList())")
     PlanResponseDTO toResponse(Plan plan);
 
 }
